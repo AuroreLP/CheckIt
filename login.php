@@ -12,7 +12,7 @@
     if ($user) {
       // on va le connecter => session
       $_SESSION['user'] = $user;
-      header('location: index.php');
+      header('location: mes-projets.php');
       exit;
 
     } else {
