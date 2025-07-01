@@ -1,8 +1,6 @@
 .env
 .env.prod
 /vendor
-dump.sql
-
 
 # Logs, caches, IDE
 *.log
