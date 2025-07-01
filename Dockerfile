@@ -17,3 +17,4 @@ WORKDIR /var/www/html
 
 # Expose le port 80
 EXPOSE 80
+
