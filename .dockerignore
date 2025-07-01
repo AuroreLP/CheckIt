@@ -1,6 +1,5 @@
 .git
-docker-compose.yaml
-nginx/
-.dockerignore
-Dockerfile-dev
+node_modules
+vendor
+compose.yaml
 .env

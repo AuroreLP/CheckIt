@@ -7,14 +7,24 @@ RUN apk add --no-cache \
         freetype-dev \
         oniguruma-dev \
         libxml2-dev \
+        nginx \
         && docker-php-ext-configure gd --with-freetype --with-jpeg \
         && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql
 
 # Installer Composer depuis l’image officielle
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Créer dossier logs Nginx
+RUN mkdir -p /run/nginx
+
 WORKDIR /var/www/html
+COPY . .
 
-# Expose le port 80
-EXPOSE 80
+# Copier la config Nginx spécifique Render
+COPY nginx/nginx.dev.conf /etc/nginx/nginx.conf
 
+# Exposer le port obligatoire Render
+EXPOSE 10000
+
+# Commande de lancement (lance PHP-FPM + nginx en foreground)
+CMD sh -c "php-fpm --nodaemonize & nginx -g 'daemon off;'"
