@@ -41,44 +41,52 @@ $projects = getProjectsByUserAndDomain($pdo, $userId, $domain_id);
       </select>
     </form>
 
-  <div class="row mt-5">
-
-    <?php if (isUserConnected()) { 
-      if ($projects) {
-        foreach ($projects as $project) { ?>
-          <div class="col-md-4 my-2">
-            <div class="card w-100">
-              <div class="card-header d-flex align-items-center justify-content-evenly">
-                <h3 class="card-title text-center"><?=$project['title'] ?></h3>
-              </div>
-              <div class="card-body d-flex flex-column ">
-                <?php $tasks = getProjectTasks($pdo, $project['id']); ?>
-                <?php if ($tasks) { ?>
-                <ul class="project-group">
+    <div class="row mt-5">
+      <?php if (isUserConnected()) {
+        if ($projects) {
+          foreach ($projects as $project) { ?>
+            <div class="col-md-4 my-2">
+              <div class="card">
+                <div class="card-header text-center">
+                  <h3 class="card-title"><?= htmlspecialchars($project['title']) ?></h3>
+                </div>
+                <div class="card-body">
+                  <?php
+                    $tasks = getProjectTasks($pdo, $project['id']);
+                    if ($tasks) {
+                      $tasks = array_slice($tasks, 0, 3); // Limiter à 3 tâches
+                  ?>
+                  <ul class="project-group">
                     <?php foreach ($tasks as $task) { ?>
-                      <li class="project-group-task"><a class="me-2" href="?id=<?=$task['id']?>&action=updateTaskStatus&redirect=project&task_id=<?=$task['id'] ?>&status=<?=!$task['status'] ?>"><i class="bi bi-check-circle<?=($task['status'] ? '-fill' : '')?>"></i></a> <?= $task['name'] ?></li>
+                      <li class="project-group-task">
+                        <a class="me-2"
+                          href="?id=<?= $task['id'] ?>&action=updateTaskStatus&redirect=project&task_id=<?= $task['id'] ?>&status=<?= !$task['status'] ?>">
+                          <i class="bi bi-check-circle<?= ($task['status'] ? '-fill' : '') ?>"></i>
+                        </a>
+                        <?= htmlspecialchars($task['name']) ?>
+                      </li>
                     <?php } ?>
-                </ul>
-                <?php } ?>
-                <div class="d-flex justify-content-between align-items-end mt-2">
-                  <a href="show-project.php?id=<?=$project['id'] ?>" class="btn btn-primary">Voir le projet</a>
-                  <span class="badge rounded-pill text-bg-primary">
-                    <i class="bi <?= htmlspecialchars($project['domain_icon'] ?? '') ?>"></i>
-                    <?= htmlspecialchars($project['domain_name'] ?? 'Domaine inconnu') ?>
-                  </span>
+                  </ul>
+                  <?php } ?>
+                  <div class="d-flex justify-content-between align-items-center mt-3">
+                    <a href="show-project.php?id=<?= $project['id'] ?>" class="btn btn-primary">Voir le projet</a>
+                    <span class="badge rounded-pill text-bg-primary">
+                      <i class="bi <?= htmlspecialchars($project['domain_icon'] ?? '') ?>"></i>
+                      <?= htmlspecialchars($project['domain_name'] ?? 'Domaine inconnu') ?>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        <?php } ?>
-      <?php } else { ?>
-        <p>Aucun projet</p>
+          <?php }
+        } else { ?>
+          <p>Aucun projet</p>
+        <?php }
+      } else { ?>
+        <p>Pour consulter vos projets, veuillez vous connecter</p>
+        <a href="login.php" class="btn btn-outline-primary me-2">Login</a>
       <?php } ?>
-
-    <?php } else { ?>
-      <p>Pour consulter vos projets, veuillez vous connecter</p>
-      <a href="login.php" class="btn btn-outline-primary me-2">Login</a>
-    <?php } ?>
+    </div>
 
   </div>
 
