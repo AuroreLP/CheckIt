@@ -15,6 +15,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Expose le port 80
-EXPOSE 80
+# Copier tout le code (pas de volumes en prod)
+COPY . .
 
+# Exposer le port obligatoire Render
+EXPOSE 10000
+
+# Lancer PHP-FPM en foreground
+CMD ["php-fpm", "-F", "--nodaemonize", "-R", "--fpm-config", "/usr/local/etc/php-fpm.conf"]
