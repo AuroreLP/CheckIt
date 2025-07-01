@@ -29,13 +29,12 @@ $projects = getProjectsByUserAndDomain($pdo, $userId, $domain_id);
       <a href="new-project.php" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Ajouter un projet</a>
     <?php } ?>
   </div>
-  <form method="get" action="my-projects.php">
-      <select name="domain" id="domain" onchange="this.form.submit()" class="form-control btn btn-primary">
-        <i class="bi bi-caret-down-fill"></i>
+    <form method="get" action="mes-projets.php" class="d-inline-block">
+      <select name="domain" id="domain" onchange="this.form.submit()" class="form-select btn btn-primary" style="width: auto;">
         <option value="">Tous les domaines</option>
         <?php foreach ($domains as $domain): ?>
           <option value="<?= htmlspecialchars($domain['id']) ?>" <?= ($domain['id'] == $domain_id) ? 'selected' : '' ?>>
-          <?= htmlspecialchars($domain['name']) ?>
+            <?= htmlspecialchars($domain['name']) ?>
           </option>
         <?php endforeach; ?>
       </select>
@@ -48,7 +47,9 @@ $projects = getProjectsByUserAndDomain($pdo, $userId, $domain_id);
             <div class="col-md-4 my-2">
               <div class="card">
                 <div class="card-header text-center">
-                  <h3 class="card-title"><?= htmlspecialchars($project['title']) ?></h3>
+                  <h3 class="card-title fs-5 fs-md-4 fs-lg-3 text-truncate">
+                    <?= htmlspecialchars($project['title']) ?>
+                  </h3>
                 </div>
                 <div class="card-body">
                   <?php

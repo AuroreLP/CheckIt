@@ -93,10 +93,25 @@ if (isset($_GET['action']) && $_GET['action'] === 'updateTaskStatus' && isset($_
       <textarea name="needs" class="form-control" rows="3"><?= htmlspecialchars($project['needs']); ?></textarea>
     </div>
   </div>
-  <a href="my-projects.php" class="btn btn-secondary mt-3">Retour à la liste des projets</a>
+  <div class="d-flex justify-content-between align-items-center mt-3 flex-column flex-md-row gap-2">
+  <!-- Groupe modifier + supprimer -->
+    <div class="d-flex gap-2 flex-column flex-sm-row w-100 w-md-auto">
+      <a href="edit-project.php?id=<?= $project_id ?>" class="btn btn-outline-primary flex-fill">
+        <i class="bi bi-pencil"></i> Modifier
+      </a>
+      <a href="mes-projets.php" class="btn btn-secondary mt-2 mt-md-0">
+      Retour à la liste des projets
+      </a>
+      <form method="post" action="" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');" style="margin:0;" class="flex-fill">
+        <input type="hidden" name="deleteProject" value="1">
+        <button type="submit" class="btn btn-danger w-100">
+          <i class="bi bi-trash3-fill"></i> Supprimer
+        </button>
+      </form>
+    </div>
+  </div>
 
   <div class="row mt-3">
-    
     <h2 class="border-bottom pt-3 mt-3">Tâches</h2>
     <?php if ($success): ?>
       <div id="successMessage" class="alert alert-success" role="alert">

@@ -3,7 +3,6 @@
   --secondary: #66c6baff;
   --success: #28a745;
   --danger: #f672d5;
-  --warning: #fd7e14;
   --info: #17a2b8;
   --light: #f8f9fa;
   --dark: #343a40;
@@ -22,7 +21,6 @@
   --bs-btn-hover-border-color: var(--secondary);
   --bs-btn-focus-shadow-rgb: 49,132,253;
   --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #ff8e31;
   --bs-btn-active-border-color: var(--secondary);
   --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   --bs-btn-disabled-color: #fff;
