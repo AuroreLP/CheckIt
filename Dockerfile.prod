@@ -1,0 +1,23 @@
+# Utilise PHP FPM alpine + nginx dans le même container
+FROM php:8.3.20-fpm-alpine
+
+# Installer nginx + extensions PHP nécessaires
+RUN apk add --no-cache nginx libpng-dev libjpeg-turbo-dev freetype-dev oniguruma-dev libxml2-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql
+
+# Copier config nginx dans le container
+COPY ./nginx/nginx.dev.conf /etc/nginx/nginx.conf
+
+# Copier ton code dans le container
+WORKDIR /var/www/html
+COPY . .
+
+# Supprimer le pid nginx s'il existe (évite erreur au redémarrage)
+RUN rm -f /run/nginx.pid
+
+# Exposer le port 80 (nginx)
+EXPOSE 80
+
+# Lancer php-fpm et nginx au démarrage du container
+CMD php-fpm -D && nginx -g 'daemon off;'

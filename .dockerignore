@@ -2,5 +2,4 @@
 node_modules
 vendor
 compose.yaml
-nginx/
 .env
