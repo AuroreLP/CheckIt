@@ -33,7 +33,7 @@ Cela va télécharger les images Docker nécessaires et démarrer les services P
 ## Accès aux interfaces
 Une fois les containers démarrés, vous pouvez accéder à votre environnement via les URLs suivantes :
 
-Site principal (Nginx + PHP) : http://localhost:8080
+Site principal (Nginx + PHP) : http://localhost:8088
 
 PhpMyAdmin (gestion de la BDD) : http://localhost:8081
 
@@ -57,7 +57,7 @@ Utilisateur : user_name
 Mot de passe : user_password
 Hôte : mysql
 
-Docker Compose : Ce projet utilise Docker Compose pour gérer les différents services. Si vous souhaitez modifier les configurations des containers, vous pouvez le faire dans les fichiers docker-compose.yaml et Dockerfile.
+Docker Compose : Ce projet utilise Docker Compose pour gérer les différents services. Si vous souhaitez modifier les configurations des containers, vous pouvez le faire dans les fichiers compose.yaml et Dockerfile.
 
 ## Configuration Nginx
 Le fichier nginx.conf permet de configurer Nginx pour gérer les requêtes HTTP et les rediriger vers le serveur PHP-FPM. Il est configuré pour gérer les requêtes PHP et les rediriger vers le container PHP à l'adresse php-fpm:9000.
