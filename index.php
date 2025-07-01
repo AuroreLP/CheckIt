@@ -10,10 +10,6 @@
         <div class="col-lg-6">
           <h1 class="display-5 fw-bold lh-1 mb-3">Suivez vos projets de partout!</h1>
           <p class="lead">Bienvenue sur CheckIt, votre nouvelle plateforme de création de listes de tâches en ligne. Avec CheckIt, vous pouvez facilement créer des projets et des tâches pour tous les aspects de votre vie. Que vous planifiez votre prochain voyage, votre travail ou vos courses, CheckIt vous aide à rester organisé et à suivre vos projets en toute simplicité.</p>
-          <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-            <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">Primary</button>
-            <button type="button" class="btn btn-outline-secondary btn-lg px-4">Default</button>
-          </div>
         </div>
       </div>
     </div>
@@ -28,7 +24,6 @@
             </div>
             <div class="card-body">
               <h3 class="card-title">Créez vos listes de projets</h3>
-              <a href="#" class="btn btn-primary">S'inscrire</a>
             </div>
           </div>
         </div>
@@ -40,7 +35,6 @@
             </div>
             <div class="card-body">
               <h3 class="card-title">Classez les projets par domaines</h3>
-              <a href="#" class="btn btn-primary">S'inscrire</a>
             </div>
           </div>
         </div>
@@ -52,7 +46,6 @@
             </div>
             <div class="card-body">
               <h3 class="card-title">Retrouvez facilement vos projets</h3>
-              <a href="#" class="btn btn-primary">S'inscrire</a>
             </div>
           </div>
         </div>
