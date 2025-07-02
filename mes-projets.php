@@ -23,15 +23,18 @@ $projects = getProjectsByUserAndDomain($pdo, $userId, $domain_id);
 ?>
 
 <div class="container">
-  <div class="d-flex justify-content-between align-items-center">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 gap-3">
     <h1>Mes Projets</h1>
-    <?php if (isUserConnected()) { ?>
-      <a href="new-project.php" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Ajouter un projet</a>
-    <?php } ?>
-  </div>
+    <div class="d-flex flex-column flex-md-row gap-3 mt-3 mt-md-0">
+      <?php if (isUserConnected()) { ?>
+        <a href="new-project.php" class="btn btn-primary mt-3 mt-md-0">
+          <i class="bi bi-plus-lg"></i> Ajouter un projet
+        </a>
+      <?php } ?>
+    </div>
     <form method="get" action="mes-projets.php" class="d-inline-block">
-      <select name="domain" id="domain" onchange="this.form.submit()" class="form-select btn btn-primary" style="width: auto;">
-        <option value="">Tous les domaines</option>
+      <select name="domain" id="domain" onchange="this.form.submit()" class="form-select btn btn-primary px-5" style="width: auto;">
+        <option value="">Filtrer par domaine</option>
         <?php foreach ($domains as $domain): ?>
           <option value="<?= htmlspecialchars($domain['id']) ?>" <?= ($domain['id'] == $domain_id) ? 'selected' : '' ?>>
             <?= htmlspecialchars($domain['name']) ?>
@@ -39,6 +42,7 @@ $projects = getProjectsByUserAndDomain($pdo, $userId, $domain_id);
         <?php endforeach; ?>
       </select>
     </form>
+  </div>
 
     <div class="row mt-5">
       <?php if (isUserConnected()) {

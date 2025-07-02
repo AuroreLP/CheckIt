@@ -24,7 +24,7 @@ COPY . .
 COPY nginx/nginx.dev.conf /etc/nginx/nginx.conf
 
 # Exposer le port obligatoire Render
-EXPOSE 10000
+EXPOSE 80
 
 # Commande de lancement (lance PHP-FPM + nginx en foreground)
 CMD sh -c "php-fpm --nodaemonize & nginx -g 'daemon off;'"

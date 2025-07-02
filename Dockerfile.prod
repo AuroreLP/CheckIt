@@ -17,7 +17,7 @@ COPY . .
 RUN rm -f /run/nginx.pid
 
 # Exposer le port 80 (nginx)
-EXPOSE 80
+EXPOSE 10000
 
 # Lancer php-fpm et nginx au démarrage du container
 CMD php-fpm -D && nginx -g 'daemon off;'
