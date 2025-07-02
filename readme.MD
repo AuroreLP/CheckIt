@@ -1,92 +1,116 @@
-# Application de Gestion de Projet - Environnement Docker
+# Checkit
+Checkit is a PHP project and task management application designed to help you organize tasks across multiple projects efficiently.
+This repository provides a Docker-based development and production environment using PHP 8.3, Nginx, and MySQL.
 
-Ce projet utilise Docker pour mettre en place un environnement de développement complet avec PHP, MySQL, Nginx et PhpMyAdmin. Il fournit une infrastructure flexible pour le développement d'applications PHP avec gestion de la base de données et interface d'administration.
+## Features
 
-## Lancement rapide
+- Manage multiple projects and related tasks
+- Simple web interface built in PHP
+- MySQL database with initial schema (imported manually)
+- PhpMyAdmin for database administration
+- Ready-to-use Docker Compose setup for development and production
 
-### 1. Cloner le dépôt
-Clonez le projet depuis GitHub et accédez au dossier du projet :
+## Clone the repo
 
-```bash
-git clone https://github.com/ton-utilisateur/ton-projet.git
-cd ton-projet
-```
-### 2. Configurer les variables d’environnement
-Avant de démarrer les containers, créez un fichier .env à la racine du projet, en utilisant le fichier .env.example comme modèle. Ce fichier contient des informations sensibles (comme les mots de passe pour MySQL) et ne doit pas être commité dans Git. Ajoutez le fichier .env à votre .gitignore.
-
-Exemple de contenu pour .env :
-```
-MYSQL_ROOT_PASSWORD=root_password
-MYSQL_DATABASE=db_name
-MYSQL_USER=user_name
-MYSQL_PASSWORD=user_password
-```
-
-### 3. Démarrer les containers
-Lancez les containers Docker avec la commande suivante :
+Clone the repository from GitHub and access the project :
 
 ```bash
-docker-compose up --build -d
+git clone https://github.com/AuroreLP/CheckIt.git
+cd Checkit
 ```
-Cela va télécharger les images Docker nécessaires et démarrer les services PHP, MySQL, Nginx et PhpMyAdmin en arrière-plan.
 
-## Accès aux interfaces
-Une fois les containers démarrés, vous pouvez accéder à votre environnement via les URLs suivantes :
+## Prerequisites
 
-Site principal (Nginx + PHP) : http://localhost:8088
+- **Docker** (>= 28.1.1)
+- **Docker Compose**
+- **Composer** (>= 2.8.6)
 
-PhpMyAdmin (gestion de la BDD) : http://localhost:8081
+## Project Structure
+.
+├── Dockerfile.dev # Development Dockerfile
+├── Dockerfile.prod # Production Dockerfile
+├── compose.dev.yaml # Docker Compose for development
+├── compose.prod.yaml # Docker Compose for production
+├── Makefile # Make commands to start/stop containers
+├── nginx/
+│ ├── nginx.dev.conf
+│ └── nginx.prod.conf
+├── dump.sql # SQL dump to initialize the database
+├── .env.example # Environment variable template
+├── assets/ # CSS and images
+├── lib/ # PHP classes
+├── templates/ # Shared HTML templates
+├── index.php and other PHP scripts
 
-## 🗃️ Base de données
-La base de données est initialisée automatiquement à partir du fichier dump.sql au premier démarrage. Si le fichier SQL existe et contient des tables et des données, elles seront chargées dans la base de données.
 
-Réinitialisation de la base de données :
-Si vous souhaitez réinitialiser la base de données (supprimer les données actuelles et recréer les tables), vous pouvez le faire en supprimant les volumes Docker et en redémarrant les containers :
-```bash
-docker-compose down -v
-docker-compose up -d
+## Docker Environment Overview
+
+The application runs in containers:
+- PHP/Nginx container
+	PHP 8.3 FPM with Nginx
+	Composer installed
+- MySQL 8.0 container
+	Initializes the database from `dump.sql`
+- PhpMyAdmin container
+	Accessible locally for development
+
+## How to Run
+
+### Development
+
+#### Configure environment variables
+
+Copy `.env.example` to `.env` with this command : cp .env.example .env
+and fill in your values:
 ```
+MYSQL_HOST=your_mysql_host
+MYSQL_DATABASE=checkit_db
+MYSQL_USER=your_mysql_user
+MYSQL_PASSWORD=your_mysql_password
+MYSQL_PORT=3306
+```
+
+#### Start development environment
+
+make up-dev
+Application available at http://localhost:8088
+PhpMyAdmin at http://localhost:8082
+
+#### Stop development environment
+make down-dev
+
+### Production
+
+1.	Create a .env.prod file with production credentials.
+2.	Start production environment with make up-prod - Nginx listens on port 10000 (required by Render).
+3.	Stop production environment with make down-prod
+
+## Database Initialization
+
+The database is initialized from dump.sql automatically when the MySQL container is started for the first time.
+If needed, you can re-import manually with the command : 
+docker exec -i mysql mysql -u <user> -p <password> < < dump.sql
+
+## Default Ports
+Environment	Application URL	PhpMyAdmin URL
+Development	http://localhost:8088
+http://localhost:8082
+
+Production	http://localhost:10000
+(PhpMyAdmin not included)
+
+## Useful Commands
+You can use the Makefile for convenience:
+Command	Description
+make up-dev	Start development environment
+make down-dev	Stop development environment
+make up-prod	Start production environment
+make down-prod	Stop production environment
+
 ## Notes
-Sécurisation des informations sensibles : N'oubliez pas d'ajouter le fichier .env à .gitignore pour éviter de commettre des informations sensibles dans Git.
+Manual Database Import: If you reset MySQL data, you may need to re-import dump.sql.
+Environment Variables: Always create a .env or .env.prod file before starting.
+Render Compatibility: Production Nginx is configured to expose port 10000.
 
-Variables d'environnement : Le fichier .env contient des informations sensibles, comme les mots de passe de la base de données. Ces variables sont utilisées pour la connexion à MySQL, PhpMyAdmin et d'autres services.
-
-PhpMyAdmin : Vous pouvez gérer votre base de données via PhpMyAdmin en accédant à http://localhost:8081. Les informations de connexion par défaut sont :
-
-Utilisateur : user_name
-Mot de passe : user_password
-Hôte : mysql
-
-Docker Compose : Ce projet utilise Docker Compose pour gérer les différents services. Si vous souhaitez modifier les configurations des containers, vous pouvez le faire dans les fichiers compose.yaml et Dockerfile.
-
-## Configuration Nginx
-Le fichier nginx.conf permet de configurer Nginx pour gérer les requêtes HTTP et les rediriger vers le serveur PHP-FPM. Il est configuré pour gérer les requêtes PHP et les rediriger vers le container PHP à l'adresse php-fpm:9000.
-
-Voici un aperçu de la configuration de base dans nginx.conf :
-```nginx
-server {
-    listen 80;
-    server_name localhost;
-
-    root /var/www/html;
-    index index.php index.html;
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location ~ \.php$ {
-        include fastcgi_params;
-        fastcgi_pass php-fpm:9000;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    }
-
-    location ~ /\.ht {
-        deny all;
-    }
-}
-```
-
-## Licence
-Ce projet est sous licence libre MIT.
+## License
+MIT License (or specify if you have another license)
