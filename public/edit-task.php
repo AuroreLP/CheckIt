@@ -1,6 +1,6 @@
 <?php
-require_once 'lib/pdo.php';
-require_once 'lib/task.php';
+require_once '/../src/pdo.php';
+require_once '/../src/task.php';
 
 $errors = [];
 $success = false;

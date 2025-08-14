@@ -1,3 +1,4 @@
+
 FROM php:8.3.20-fpm-alpine
 
 # Installer les dépendances Alpine + extensions PHP
@@ -11,7 +12,7 @@ RUN apk add --no-cache \
         && docker-php-ext-configure gd --with-freetype --with-jpeg \
         && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql
 
-# Installer Composer depuis l’image officielle
+# Installer Composer depuis l'image officielle
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Créer dossier logs Nginx
@@ -20,11 +21,11 @@ RUN mkdir -p /run/nginx
 WORKDIR /var/www/html
 COPY . .
 
-# Copier la config Nginx spécifique Render
+# Copier la config Nginx spécifique
 COPY nginx/nginx.dev.conf /etc/nginx/nginx.conf
 
-# Exposer le port obligatoire Render
+# Exposer le port
 EXPOSE 80
 
-# Commande de lancement (lance PHP-FPM + nginx en foreground)
-CMD sh -c "php-fpm --nodaemonize & nginx -g 'daemon off;'"
+# Version simplifiée qui marche à coup sûr
+CMD ["sh", "-c", "php-fpm -D && exec nginx -g 'daemon off;'"]

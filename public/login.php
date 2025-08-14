@@ -1,8 +1,8 @@
 <?php
   ob_start(); // Démarre un tampon de sortie
-  require_once __DIR__ . "/lib/session.php"; 
-  require_once __DIR__. "/lib/pdo.php";
-  require_once __DIR__. "/lib/user.php";
+  require_once __DIR__ . "/../src/session.php"; 
+  require_once __DIR__. "/../src/pdo.php";
+  require_once __DIR__. "/../src/user.php";
 
   $errors = [];
 
@@ -22,7 +22,7 @@
   }
 ?>
 
-<?php require_once __DIR__. "/templates/header.php"; ?>
+<?php require_once __DIR__. "/../templates/header.php"; ?>
 
 <div class="container col-xxl-8 px-4 py-5">
   <h1>Se connecter</h1>
@@ -52,6 +52,6 @@
 
 
 <?php
-  require_once __DIR__. "/templates/footer.php";
+  require_once __DIR__. "/../templates/footer.php";
   ob_end_flush(); // Vide le tampon et envoie tout au navigateur
 ?>

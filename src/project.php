@@ -71,7 +71,7 @@ function getProjectById(PDO $pdo, int $id): array|bool
 }
 
 
-function saveProject(PDO $pdo, string $title, int $user_id, int $domain_id, ?string $needs=null, int $id=null):int|false
+function saveProject(PDO $pdo, string $title, int $user_id, int $domain_id, ?string $needs=null, ?int $id=null):int|false
 {
   if ($needs === null) {
     $needs = '';
@@ -113,7 +113,7 @@ function updateProject(PDO $pdo, int $project_id, array $data): bool {
   $query = $pdo->prepare("UPDATE project SET title = :title, needs = :needs, domain_id = :domain_id WHERE id = :id");
   $query->bindValue(':title', $data['title'], PDO::PARAM_STR);
   $query->bindValue(':domain_id', $data['domain_id'], PDO::PARAM_INT);
-  $query->bindValue(':needs', $needs, PDO::PARAM_STR);
+  $query->bindValue(':needs', $data['needs'] ?? '', PDO::PARAM_STR);
   $query->bindValue(':id', $project_id, PDO::PARAM_INT);
 
   return $query->execute();

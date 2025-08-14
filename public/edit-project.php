@@ -1,10 +1,10 @@
 <?php
 ob_start();
-require_once __DIR__ . "/templates/header.php";
-require_once 'lib/pdo.php';
-require_once 'lib/project.php';
-require_once 'lib/domain.php';
-require_once 'lib/task.php';
+require_once __DIR__ . "/../templates/header.php";
+require_once '/../src/pdo.php';
+require_once '/../src/project.php';
+require_once '/../src/domain.php';
+require_once '/../src/task.php';
 
 if (!isUserConnected()) {
     header('Location: login.php');
@@ -62,7 +62,7 @@ if (isset($_POST['saveTask'])) {
     }
 
     if (empty($errorsProjectTask)) {
-        $res = saveProjectTask($pdo, $name, $phase, $deadline, $description, $id, $status);
+        $res = addTask($pdo, $name, $phase, $deadline, $description, $id, $status);
         if (!$res) $errorsProjectTask[] = "Erreur lors de l'enregistrement.";
     }
 }

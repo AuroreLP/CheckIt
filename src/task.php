@@ -1,6 +1,6 @@
 <?php
-  require_once 'lib/pdo.php';
-  require_once 'lib/project.php';
+  require_once 'pdo.php';
+  require_once 'project.php';
 
   // Définition de l'énumération pour les phases
 enum Phase: string {
@@ -28,7 +28,7 @@ enum Phase: string {
   }
 
   // Fonction pour ajouter une nouvelle tâche
-  function addTask($pdo, $name, $phase, $deadline, $description, $project_id, $status) {
+  function addTask($pdo, $name, $phase, $deadline, $description, $project_id, $status = false) {
     $stmt = $pdo->prepare("INSERT INTO task (name, phase, deadline, description, project_id, status) VALUES (:name, :phase, :deadline, :description, :project_id, :status)");
     $stmt->execute([
         'name' => $name,

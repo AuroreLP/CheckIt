@@ -1,9 +1,9 @@
 <?php
-  require_once 'templates/header.php';
-  require_once 'lib/pdo.php';
-  require_once 'lib/project.php';
-  require_once 'lib/domain.php';
-  require_once 'lib/task.php';
+  require_once __DIR__ . '/../templates/header.php';
+  require_once __DIR__ . '/../src/pdo.php';
+  require_once __DIR__ . '/../src/project.php';
+  require_once __DIR__ . '/../src/domain.php';
+  require_once __DIR__ . '/../src/task.php';
   
 
   if (!isset($_SESSION['user'])) {
@@ -99,5 +99,5 @@ $projects = getProjectsByUserAndDomain($pdo, $userId, $domain_id);
 </div>
 
 <?php
-  require_once __DIR__ . "/templates/footer.php"
+  require_once __DIR__ . "/../templates/footer.php"
 ?>

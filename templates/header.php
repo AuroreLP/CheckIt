@@ -1,5 +1,5 @@
 <?php 
-require_once __DIR__ . '/../lib/session.php';
+require_once __DIR__ . '/../src/session.php';
 ?>
 <!DOCTYPE html>
 <html lang="fr">

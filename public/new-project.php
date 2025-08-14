@@ -1,9 +1,9 @@
 <?php
 ob_start();
-require_once __DIR__ . "/templates/header.php";
-require_once 'lib/pdo.php';
-require_once 'lib/project.php';
-require_once 'lib/domain.php';
+require_once __DIR__ . "/../templates/header.php";
+require_once '/../src/pdo.php';
+require_once '/../src/project.php';
+require_once '/../src/domain.php';
 
 if (!isUserConnected()) {
     header('Location: login.php');
