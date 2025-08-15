@@ -1,25 +1,26 @@
 <?php
-  ob_start(); // Démarre un tampon de sortie
-  require_once __DIR__ . "/../src/session.php"; 
-  require_once __DIR__. "/../src/pdo.php";
-  require_once __DIR__. "/../src/user.php";
+ob_start();
+require_once __DIR__ . "/../src/session.php";
+require_once __DIR__. "/../src/pdo.php";
+require_once __DIR__. "/../src/user.php";
 
-  $errors = [];
+$errors = [];
 
-  if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loginUser'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loginUser'])) {
+    echo "<div class='alert alert-warning'>Tentative de connexion en cours...</div>";
+    
     $user = verifyUserLoginPassword($pdo, $_POST['username'], $_POST['password']);
-
+    
+    echo "<div class='alert alert-info'>Résultat verifyUserLoginPassword: " . ($user ? 'UTILISATEUR TROUVÉ' : 'UTILISATEUR NON TROUVÉ') . "</div>";
+    
     if ($user) {
-      // on va le connecter => session
-      $_SESSION['user'] = $user;
-      header('location: mes-projets.php');
-      exit;
-
+        $_SESSION['user'] = $user;
+        header('location: mes-projets.php');
+        exit;
     } else {
-      // afficher une erreur
-      $errors[] = "Pseudo ou mot de passe incorrect";
+        $errors[] = "Pseudo ou mot de passe incorrect";
     }
-  }
+}
 ?>
 
 <?php require_once __DIR__. "/../templates/header.php"; ?>
@@ -45,7 +46,7 @@
       <input type="password" name="password" id="password" class="form-control" required>
     </div>
 
-    <input type="submit" name="loginUser" value="connexion" class="btn btn-primary">
+    <input type="submit" name="loginUser" value="connexion" class="btn btn-primary" onclick="console.log('Bouton cliqué!');">
 
   </form>
 </div>

@@ -1,15 +1,17 @@
 <?php
+  require_once __DIR__ . '/../src/session.php'; 
+  
+  if (!isset($_SESSION['user'])) {
+    header('Location: login.php');
+    exit;
+  }
+  
   require_once __DIR__ . '/../templates/header.php';
   require_once __DIR__ . '/../src/pdo.php';
   require_once __DIR__ . '/../src/project.php';
   require_once __DIR__ . '/../src/domain.php';
   require_once __DIR__ . '/../src/task.php';
   
-
-  if (!isset($_SESSION['user'])) {
-    header('Location: login.php');
-    exit;
-}
 
 $userId = $_SESSION['user']['id'];
 $domain_id = isset($_GET['domain']) ? (int)$_GET['domain'] : null;

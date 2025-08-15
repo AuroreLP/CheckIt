@@ -1,6 +1,6 @@
 <?php
-require_once '/../src/pdo.php';
-require_once '/../src/task.php';
+require_once __DIR__ . '/../src/pdo.php';
+require_once __DIR__ . '/../src/task.php';
 
 $errors = [];
 $success = false;

@@ -1,9 +1,9 @@
 <?php
-require_once '/../templates/header.php';
-require_once '/../src/pdo.php';
-require_once '/../src/project.php';
-require_once '/../src/domain.php';
-require_once '/../src/task.php';
+require_once __DIR__ . '/../templates/header.php';
+require_once __DIR__ . '/../src/pdo.php';
+require_once __DIR__ . '/../src/project.php';
+require_once __DIR__ . '/../src/domain.php';
+require_once __DIR__ . '/../src/task.php';
 
 // Vérifier l'existence du projet
   if (!isset($_GET['id'])) {
