@@ -53,5 +53,5 @@
     </div>
 
 <?php
-  require_once __DIR__. "/templates/footer.php"
+  require_once __DIR__. "/../templates/footer.php"
 ?>
