@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile.prod
     container_name: php-fpm
+    ports:
+      - "8089:10000"
     volumes:
       - .:/var/www/html
     environment:
