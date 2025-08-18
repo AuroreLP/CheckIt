@@ -7,17 +7,17 @@ RUN apk add --no-cache nginx libpng-dev libjpeg-turbo-dev freetype-dev oniguruma
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql
 
 # Copier config nginx dans le container
-COPY ./nginx/nginx.dev.conf /etc/nginx/nginx.conf
+COPY ./nginx/nginx.prod.conf /etc/nginx/nginx.conf
 
-# Copier ton code dans le container
+# Copier le code dans le container
 WORKDIR /var/www/html
 COPY . .
 
-# Supprimer le pid nginx s'il existe (évite erreur au redémarrage)
-RUN rm -f /run/nginx.pid
+# Créer dossier nginx run
+RUN mkdir -p /run/nginx
 
-# Exposer le port 80 (nginx)
+# Exposer le port 10000
 EXPOSE 10000
 
-# Lancer php-fpm et nginx au démarrage du container
+# Lancer nginx et php-fpm
 CMD php-fpm -D && nginx -g 'daemon off;'
