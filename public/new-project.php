@@ -68,6 +68,6 @@ if (isset($_POST['saveProject'])) {
 </div>
 
 <?php
-require_once __DIR__ . "/templates/footer.php";
+require_once __DIR__ . "/../templates/footer.php";
 ob_end_flush();
 ?>
