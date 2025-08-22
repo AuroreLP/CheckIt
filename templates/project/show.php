@@ -1,0 +1,294 @@
+<!-- templates/project/show.php -->
+
+<!-- Messages d'alerte -->
+<?php if ($success): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>
+        <?= htmlspecialchars($success) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<?php endif; ?>
+
+<?php if (!empty($errors)): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        <ul class="mb-0">
+            <?php foreach ($errors as $error): ?>
+                <li><?= htmlspecialchars($error) ?></li>
+            <?php endforeach; ?>
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<?php endif; ?>
+
+<div class="container">
+    <!-- En-tête du projet -->
+    <div class="d-flex justify-content-between align-items-end mt-2">
+        <h1><?= htmlspecialchars($project['title']) ?></h1>
+        <span class="badge rounded-pill text-bg-primary fs-4 mb-2">
+            <i class="bi <?= htmlspecialchars($project['domain_icon'] ?? '') ?>"></i>
+            <?= htmlspecialchars($project['domain_name'] ?? 'Domaine inconnu') ?>
+        </span>
+    </div>
+
+    <!-- Section éditable du projet -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-info-circle me-2"></i>
+                Informations du projet
+            </h5>
+            <button type="button" 
+                    id="editProjectBtn" 
+                    class="btn btn-outline-primary btn-sm"
+                    data-original-title="<?= htmlspecialchars($project['title']) ?>"
+                    data-original-domain-id="<?= htmlspecialchars($project['domain_id']) ?>"
+                    data-original-needs="<?= htmlspecialchars($project['needs'] ?? '') ?>">
+                <i class="bi bi-pencil me-1"></i>Modifier
+            </button>
+        </div>
+        <div class="card-body">
+            <!-- Mode lecture -->
+            <div id="projectDisplay">
+                <div class="row gy-3 gy-md-0">
+                    <!-- Colonne de gauche : Titre + Domaine -->
+                    <!-- Mobile: pleine largeur, Desktop: 50% -->
+                    <div class="col-12 col-md-6 project-info-left">
+                        <!-- Titre -->
+                        <div class="mb-3 mb-md-4">
+                            <strong class="d-block mb-1">Titre :</strong>
+                            <p class="mb-0 fs-5 fs-md-4 fw-medium"><?= htmlspecialchars($project['title']) ?></p>
+                        </div>
+                        <!-- Domaine -->
+                        <div class="mb-3 mb-md-4">
+                            <strong class="d-block mb-1">Domaine :</strong>
+                            <p class="mb-0">
+                                <i class="bi <?= htmlspecialchars($project['domain_icon'] ?? 'bi-folder') ?> me-2 text-primary"></i>
+                                <span class="fw-medium"><?= htmlspecialchars($project['domain_name'] ?? 'Non défini') ?></span>
+                            </p>
+                        </div>
+                    </div>
+    
+                    <!-- Colonne de droite : Besoins -->
+                    <!-- Mobile: pleine largeur (en dessous), Desktop: 50% (à côté) -->
+                    <div class="col-12 col-md-6 project-info-right">
+                        <strong class="d-block mb-2">Besoins du projet :</strong>
+                        <div class="needs-content">
+                            <?php if (!empty($project['needs'])): ?>
+                                <?= nl2br(htmlspecialchars($project['needs'])) ?>
+                            <?php else: ?>
+                                <span class="text-muted fst-italic">Aucun besoin spécifié pour ce projet.</span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mode édition -->
+            <div id="projectEdit" style="display: none;">
+                <form action="" method="post">
+                    <input type="hidden" name="updateProject" value="1">
+                    
+                    <div class="row gy-3 gy-md-0">
+                        <!-- Colonne de gauche : Titre + Domaine -->
+                        <!-- Mobile: pleine largeur, Desktop: 50% -->
+                        <div class="col-12 col-md-6 project-info-left">
+                            <!-- Titre -->
+                            <div class="mb-3 mb-md-4">
+                                <label for="projectTitle" class="form-label fw-bold">Titre *</label>
+                                <input type="text" 
+                                    name="title" 
+                                    id="projectTitle" 
+                                    class="form-control" 
+                                    value="<?= htmlspecialchars($project['title']) ?>" 
+                                    required
+                                    placeholder="Nom du projet">
+                            </div>
+                            
+                            <!-- Domaine -->
+                            <div class="mb-3 mb-md-4">
+                                <label for="projectDomain" class="form-label fw-bold">Domaine *</label>
+                                <select name="domain_id" id="projectDomain" class="form-select" required>
+                                    <option value="">-- Sélectionnez un domaine --</option>
+                                    <?php foreach ($domains as $domain): ?>
+                                        <option value="<?= $domain['id'] ?>" 
+                                                <?= ($project['domain_id'] == $domain['id']) ? 'selected' : '' ?>>
+                                            <i class="bi <?= htmlspecialchars($domain['icon'] ?? 'bi-folder') ?>"></i>
+                                            <?= htmlspecialchars($domain['name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Colonne de droite : Besoins -->
+                        <!-- Mobile: pleine largeur (en dessous), Desktop: 50% (à côté) -->
+                        <div class="col-12 col-md-6 project-info-right">
+                            <label for="projectNeeds" class="form-label fw-bold d-block mb-2">Besoins du projet</label>
+                            <textarea name="needs" 
+                                    id="projectNeeds" 
+                                    class="form-control needs-textarea" 
+                                    rows="6"
+                                    placeholder="Décrivez les besoins, objectifs et contraintes de ce projet..."><?= htmlspecialchars($project['needs'] ?? '') ?></textarea>
+                            <div class="form-text mt-1">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Détaillez les fonctionnalités attendues, les contraintes techniques, les objectifs business...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Boutons d'action -->
+                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-start mt-4 pt-3 border-top">
+                        <button type="submit" class="btn btn-primary">
+                            Sauvegarder les modifications
+                        </button>
+                        <button type="button" id="cancelEditBtn" class="btn btn-secondary">
+                            Annuler
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Tâches -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-list-task me-2"></i>
+                Tâches du projet
+            </h5>
+        </div>
+        <div class="card-body">
+            <!-- Formulaire d'ajout de tâche -->
+            <form method="post" class="row gy-2 gx-3 align-items-end mb-4">
+                <div class="col-md-3">
+                    <label class="form-label">Nom de la tâche</label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Description</label>
+                    <input type="text" name="description" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Phase</label>
+                    <select name="phase" class="form-select" required>
+                        <option value="">Choisir...</option>
+                        <?php foreach ($phases as $case): ?>
+                            <option value="<?= $case->value ?>">
+                                <?= ucfirst($case->name) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Date limite</label>
+                    <input type="date" name="deadline" class="form-control" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" name="saveTask" class="btn btn-primary w-100">
+                        <i class="bi bi-plus-lg me-1"></i>Ajouter
+                    </button>
+                </div>
+            </form>
+
+            <!-- Liste des tâches -->
+            <?php if ($tasks): ?>
+                <div class="accordion" id="accordionTasks">
+                    <?php foreach ($tasks as $task): ?>
+                        <div class="accordion-item mb-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed d-flex align-items-center" 
+                                        type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#collapse-<?= $task['id'] ?>">
+                                    <a class="me-3 text-decoration-none" 
+                                       href="?id=<?= $project_id ?>&action=updateTaskStatus&task_id=<?= $task['id'] ?>&status=<?= !$task['status'] ?>"
+                                       onclick="event.stopPropagation();">
+                                        <i class="bi bi-check-circle<?= ($task['status'] ? '-fill text-success' : ' text-muted') ?> fs-5"></i>
+                                    </a>
+                                    <span class="<?= $task['status'] ? 'text-decoration-line-through text-muted' : '' ?>">
+                                        <?= htmlspecialchars($task['name']) ?>
+                                    </span>
+                                    <span class="badge bg-secondary ms-auto me-3">
+                                        <?= ucfirst($task['phase']) ?>
+                                    </span>
+                                </button>
+                            </h2>
+                            <div id="collapse-<?= $task['id'] ?>" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <form method="post">
+                                        <input type="hidden" name="task_id" value="<?= $task['id'] ?>">
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Nom</label>
+                                                <input type="text" name="name" class="form-control" 
+                                                       value="<?= htmlspecialchars($task['name']) ?>" required>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Phase</label>
+                                                <select name="phase" class="form-select">
+                                                    <?php foreach ($phases as $case): ?>
+                                                        <option value="<?= $case->value ?>" 
+                                                                <?= $task['phase'] === $case->value ? 'selected' : '' ?>>
+                                                            <?= ucfirst($case->value) ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Date limite</label>
+                                                <input type="date" name="deadline" class="form-control" 
+                                                       value="<?= htmlspecialchars($task['deadline']) ?>">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Description</label>
+                                            <textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($task['description']) ?></textarea>
+                                        </div>
+                                        
+                                        <div class="d-flex justify-content-between">
+                                            <button type="submit" name="editTask" class="btn btn-primary">
+                                                <i class="bi bi-check-lg me-1"></i>Modifier
+                                            </button>
+                                            <a href="?id=<?= $project_id ?>&action=deleteProjectTask&task_id=<?= $task['id'] ?>"
+                                               class="btn btn-outline-danger"
+                                               onclick="return confirm('Supprimer cette tâche ?');">
+                                                <i class="bi bi-trash3 me-1"></i>Supprimer
+                                            </a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-list-task display-6"></i>
+                    <p class="mt-2">Aucune tâche pour ce projet</p>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+        <!-- Actions du projet -->
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-4 flex-wrap gap-2">
+        <a href="dashboard.php?tab=projets" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Retour à la liste des projets
+        </a>
+        
+        <form method="post" class="d-inline" 
+              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');">
+            <input type="hidden" name="deleteProject" value="1">
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash3-fill me-2"></i>Supprimer le projet
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Include JS -->
+<script src="assets/js/project-edit.js"></script>

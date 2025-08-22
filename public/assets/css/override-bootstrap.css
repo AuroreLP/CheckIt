@@ -89,6 +89,38 @@ button.btn-danger.disabled,
   opacity: 0.65;
 }
 
+/* ICONES */
+
+/* Taille de base pour toutes les icônes */
+.bi {
+    font-size: 0.875rem !important;
+}
+
+/* Icônes dans les boutons */
+.btn .bi {
+    font-size: 0.75rem !important;
+}
+
+/* Icônes dans les titres */
+h1 .bi, h2 .bi, h3 .bi, h4 .bi, h5 .bi {
+    font-size: 1.2rem !important;
+}
+
+/* Icônes dans les badges */
+.badge .bi {
+    font-size: 0.7rem !important;
+}
+
+/* Icônes dans les alertes */
+.alert .bi {
+    font-size: 0.875rem !important;
+}
+
+/* Icônes dans la navigation */
+.nav .bi, .navbar .bi {
+    font-size: 0.875rem !important;
+}
+
 /* NAVIGATION */
 .nav-pills {
   --bs-nav-pills-border-radius: 0.375rem;
@@ -190,4 +222,140 @@ h3 {
 
 form i {
   color: var(--primary);
+}
+
+/* PAGE PROJET - SECTION INFORMATIONS DU PROJET */
+.project-info-left {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 15px;
+}
+
+.project-info-right {
+    padding-left: 0;
+    padding-top: 15px;
+}
+
+/* Desktop (md et plus) */
+@media (min-width: 768px) {
+    .project-info-left {
+        border-right: 1px solid #dee2e6;
+        border-bottom: none;
+        padding-right: 20px;
+        padding-bottom: 0;
+    }
+    
+    .project-info-right {
+        padding-left: 20px;
+        padding-top: 0;
+    }
+}
+
+/* Style pour la zone des besoins */
+.needs-content {
+    background-color: #f8f9fa;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 3px solid var(--primary);
+    min-height: 80px;
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+/* Desktop : besoins plus spacieux */
+@media (min-width: 768px) {
+    .needs-content {
+        padding: 15px;
+        border-radius: 8px;
+        border-left-width: 4px;
+        min-height: 120px;
+        line-height: 1.6;
+        font-size: 1rem;
+    }
+}
+
+.needs-content:empty::before {
+    content: "Aucun besoin spécifié pour ce projet.";
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Responsive pour les espacements */
+@media (max-width: 767.98px) {
+    /* Sur mobile, réduire les espacements */
+    .mb-3.mb-md-4 {
+        margin-bottom: 1rem !important;
+    }
+}
+
+/* PAGE PROJECT - SECTION MODIFICATION DES INFORMATIONS DU PROJET */
+/* Textarea des besoins - adaptatif */
+.needs-textarea {
+    min-height: 120px;
+    resize: vertical;
+    border: 2px solid #e9ecef;
+    transition: border-color 0.15s ease-in-out;
+}
+
+.needs-textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Sur desktop, textarea plus haute pour correspondre à la hauteur de gauche */
+@media (min-width: 768px) {
+    .needs-textarea {
+        min-height: 160px;
+    }
+}
+
+/* Labels en mode édition */
+#projectEdit .form-label {
+    color: var(--primary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Select et input focus */
+#projectEdit .form-control:focus,
+#projectEdit .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.15);
+}
+
+/* Boutons responsive */
+@media (max-width: 575.98px) {
+    #projectEdit .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Animation pour le passage en mode édition */
+#projectEdit {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Amélioration du form-text */
+#projectEdit .form-text {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* Espacement cohérent avec le mode lecture */
+#projectEdit .project-info-left,
+#projectEdit .project-info-right {
+    /* Hérite des styles définis précédemment */
 }
