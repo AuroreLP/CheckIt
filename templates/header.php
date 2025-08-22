@@ -29,6 +29,10 @@ require_once __DIR__ . '/../src/session.php';
 
       <div class="col-md-3 text-end">
         <?php if (isUserConnected()) { ?>
+          <span class="me-3 text-muted">
+            <i class="bi bi-person-circle me-1"></i>
+            @<?php echo htmlspecialchars(getConnectedUserName()); ?>
+          </span>
           <a href="logout.php" class="btn btn-outline-primary me-2">Déconnexion</a>
         <?php } else { ?>
           <a href="login.php" class="btn btn-outline-primary me-2">Login</a>
