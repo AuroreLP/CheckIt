@@ -11,7 +11,7 @@ require_once __DIR__ . '/../src/session.php';
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="assets/css/override-bootstrap.css">
   <!-- Bootstrap JS (inclut Popper.js) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 </head>
 <body>
   <div class="container">
@@ -24,11 +24,15 @@ require_once __DIR__ . '/../src/session.php';
 
       <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
         <li><a href="index.php" class="nav-link px-2 link-secondary">Home</a></li>
-        <li><a href="mes-projets.php" class="nav-link px-2">Mes Projets</a></li>
+        <li><a href="dashboard.php" class="nav-link px-2">Dashboard</a></li>
       </ul>
 
       <div class="col-md-3 text-end">
         <?php if (isUserConnected()) { ?>
+          <a href="dashboard.php" class="me-3 text-decoration-none text-muted">
+            <i class="bi bi-person-circle me-1"></i>
+            @<?php echo htmlspecialchars(getConnectedUserName()); ?>
+          </a>
           <a href="logout.php" class="btn btn-outline-primary me-2">Déconnexion</a>
         <?php } else { ?>
           <a href="login.php" class="btn btn-outline-primary me-2">Login</a>

@@ -2,7 +2,7 @@
 ob_start();
 require_once __DIR__ . "/../src/session.php";
 require_once __DIR__ . "/../src/pdo.php";
-require_once __DIR__ . "/../src/user.php";
+require_once __DIR__ . "/../src/authentication.php";
 
 $errors = [];
 $success = false;
