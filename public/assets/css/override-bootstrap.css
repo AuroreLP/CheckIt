@@ -11,6 +11,8 @@
   --bs-link-hover-color: var(--secondary);
   --bs-primary-rgb: 102, 198, 186;
   --bs-danger: #A6A0D8;
+  --bs-info: #17a2b8;
+  --bs-info-rgb: 23, 162, 184;
 }
 
 /* BOUTONS PRINCIPAUX */
@@ -358,4 +360,45 @@ form i {
 #projectEdit .project-info-left,
 #projectEdit .project-info-right {
     /* Hérite des styles définis précédemment */
+}
+
+/* PAGE PROJET - SECTION LISTE DES TÂCHES */
+/* Style responsive pour les badges */
+@media (max-width: 768px) {
+    .accordion-button .badge {
+        font-size: 0.7rem !important;
+        padding: 0.25rem 0.5rem !important;
+    }
+    
+    .accordion-button .badge .bi {
+        font-size: 0.6rem !important;
+    }
+}
+
+/* Espacement des badges */
+.accordion-button .d-flex.gap-2 {
+    flex-wrap: nowrap;
+}
+
+/* Style pour les dates courtes */
+.badge.deadline {
+    min-width: 60px;
+    text-align: center;
+}
+
+/* Hover effect pour les badges de date */
+.badge:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+}
+
+/* Style pour les tâches en retard */
+.task-overdue {
+    border-left: 4px solid #fa6292 !important;
+    background-color: #fff5f5 !important;
+}
+
+.task-due-soon {
+    border-left: 4px solid #f9f517 !important;
+    background-color: #fffef5 !important;
 }

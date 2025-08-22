@@ -151,12 +151,12 @@
         </div>
     </div>
 
-    <!-- Section Tâches -->
-    <div class="card">
+    <!-- Ajouter une tâche -->
+    <div class="card mb-4">
         <div class="card-header">
             <h5 class="mb-0">
                 <i class="bi bi-list-task me-2"></i>
-                Tâches du projet
+                Ajouter une tâche au projet
             </h5>
         </div>
         <div class="card-body">
@@ -191,42 +191,103 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
 
+    <!-- Section liste des tâches -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-list-task me-2"></i>
+                Tâches du projet
+            </h5>
+        </div>
+
+        <div class="card-body">
             <!-- Liste des tâches -->
             <?php if ($tasks): ?>
                 <div class="accordion" id="accordionTasks">
                     <?php foreach ($tasks as $task): ?>
-                        <div class="accordion-item mb-3">
+                        <?php 
+                        $today = new DateTime();
+                        $deadline = new DateTime($task['deadline']);
+                        $isOverdue = !$task['status'] && $deadline < $today;
+                        $isDueSoon = !$task['status'] && !$isOverdue && $deadline <= (clone $today)->modify('+3 days');
+                        ?>
+                        
+                        <!-- Item avec bordure colorée Bootstrap -->
+                        <div class="accordion-item mb-3 <?= $isOverdue ? 'border-danger border-3' : ($isDueSoon ? 'border-warning border-3' : '') ?>">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed d-flex align-items-center" 
+                                <button class="accordion-button collapsed p-3" 
                                         type="button" 
                                         data-bs-toggle="collapse" 
                                         data-bs-target="#collapse-<?= $task['id'] ?>">
-                                    <a class="me-3 text-decoration-none" 
-                                       href="?id=<?= $project_id ?>&action=updateTaskStatus&task_id=<?= $task['id'] ?>&status=<?= !$task['status'] ?>"
-                                       onclick="event.stopPropagation();">
-                                        <i class="bi bi-check-circle<?= ($task['status'] ? '-fill text-success' : ' text-muted') ?> fs-5"></i>
-                                    </a>
-                                    <span class="<?= $task['status'] ? 'text-decoration-line-through text-muted' : '' ?>">
-                                        <?= htmlspecialchars($task['name']) ?>
-                                    </span>
-                                    <span class="badge bg-secondary ms-auto me-3">
-                                        <?= ucfirst($task['phase']) ?>
-                                    </span>
+                                    
+                                    <div class="w-100">
+                                        <!-- Ligne principale : toujours visible -->
+                                        <div class="d-flex align-items-center mb-2 mb-md-0">
+                                            <a class="me-3 text-decoration-none" 
+                                            href="?id=<?= $project_id ?>&action=updateTaskStatus&task_id=<?= $task['id'] ?>&status=<?= !$task['status'] ?>"
+                                            onclick="event.stopPropagation();">
+                                                <i class="bi bi-check-circle<?= ($task['status'] ? '-fill text-success' : ' text-muted') ?> fs-5"></i>
+                                            </a>
+                                            
+                                            <span class="<?= $task['status'] ? 'text-muted' : 'fw-medium' ?> flex-grow-1">
+                                                <?= htmlspecialchars($task['name']) ?>
+                                            </span>
+                                            
+                                            <!-- Desktop seulement : badges à droite -->
+                                            <div class="d-none d-md-flex gap-2 ms-3 me-3">
+                                                <span class="badge <?= $isOverdue ? 'bg-danger' : ($isDueSoon ? 'bg-warning text-dark' : 'bg-secondary') ?>">
+                                                    <i class="bi bi-calendar me-1"></i>
+                                                    <?= date('d/m', strtotime($task['deadline'])) ?>
+                                                </span>
+                                                <span class="badge bg-primary">
+                                                    <?= ucfirst($task['phase']) ?>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Mobile seulement : infos empilées -->
+                                        <div class="d-md-none ms-5 pt-2">
+                                            <div class="mb-2">
+                                                <span class="badge <?= $isOverdue ? 'bg-danger' : ($isDueSoon ? 'bg-warning text-dark' : 'bg-secondary') ?>">
+                                                    <i class="bi bi-calendar me-1"></i>
+                                                    <?= date('d/m/Y', strtotime($task['deadline'])) ?>
+                                                    <?php if ($isOverdue): ?>
+                                                        <i class="bi bi-exclamation-triangle ms-1"></i>
+                                                    <?php elseif ($isDueSoon): ?>
+                                                        <i class="bi bi-clock ms-1"></i>
+                                                    <?php endif; ?>
+                                                </span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <span class="badge bg-info">
+                                                    <i class="bi bi-gear me-1"></i>
+                                                    <?= ucfirst($task['phase']) ?>
+                                                </span>
+                                            </div>
+                                            <div class="small text-muted fst-italic">
+                                                <i class="bi bi-chevron-down me-1"></i>
+                                                Toucher pour modifier
+                                            </div>
+                                        </div>
+                                    </div>
                                 </button>
                             </h2>
-                            <div id="collapse-<?= $task['id'] ?>" class="accordion-collapse collapse">
+                            
+                            <div id="collapse-<?= $task['id'] ?>" class="accordion-collapse collapse" data-bs-parent="#accordionTasks">
                                 <div class="accordion-body">
                                     <form method="post">
                                         <input type="hidden" name="task_id" value="<?= $task['id'] ?>">
                                         
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
-                                                <label class="form-label">Nom</label>
+                                            <div class="col-md-4 mb-3">
+                                                <label class="form-label">Nom de la tâche</label>
                                                 <input type="text" name="name" class="form-control" 
-                                                       value="<?= htmlspecialchars($task['name']) ?>" required>
+                                                    value="<?= htmlspecialchars($task['name']) ?>" required>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <label class="form-label">Phase</label>
                                                 <select name="phase" class="form-select">
                                                     <?php foreach ($phases as $case): ?>
@@ -237,10 +298,10 @@
                                                     <?php endforeach; ?>
                                                 </select>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <label class="form-label">Date limite</label>
                                                 <input type="date" name="deadline" class="form-control" 
-                                                       value="<?= htmlspecialchars($task['deadline']) ?>">
+                                                    value="<?= htmlspecialchars($task['deadline']) ?>">
                                             </div>
                                         </div>
                                         
@@ -249,14 +310,14 @@
                                             <textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($task['description']) ?></textarea>
                                         </div>
                                         
-                                        <div class="d-flex justify-content-between">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
                                             <button type="submit" name="editTask" class="btn btn-primary">
-                                                <i class="bi bi-check-lg me-1"></i>Modifier
+                                                <i class="bi bi-check-lg me-1"></i>Modifier la tâche
                                             </button>
                                             <a href="?id=<?= $project_id ?>&action=deleteProjectTask&task_id=<?= $task['id'] ?>"
-                                               class="btn btn-outline-danger"
-                                               onclick="return confirm('Supprimer cette tâche ?');">
-                                                <i class="bi bi-trash3 me-1"></i>Supprimer
+                                            class="btn btn-danger"
+                                            onclick="return confirm('Supprimer cette tâche ?');">
+                                                <i class="bi bi-trash3 me-1"></i>Supprimer la tâche
                                             </a>
                                         </div>
                                     </form>
@@ -264,11 +325,6 @@
                             </div>
                         </div>
                     <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <div class="text-center py-4 text-muted">
-                    <i class="bi bi-list-task display-6"></i>
-                    <p class="mt-2">Aucune tâche pour ce projet</p>
                 </div>
             <?php endif; ?>
         </div>

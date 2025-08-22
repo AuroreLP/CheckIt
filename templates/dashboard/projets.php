@@ -49,17 +49,6 @@
                                 <h5 class="card-title mb-0 text-truncate">
                                     <?= htmlspecialchars($project['title']) ?>
                                 </h5>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-outline-secondary px-2 py-1" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-sm">
-                                        <li><a class="dropdown-item" href="show-project.php?id=<?= $project['id'] ?>"><i class="bi bi-eye me-2"></i>Voir</a></li>
-                                        <li><a class="dropdown-item" href="edit-project.php?id=<?= $project['id'] ?>"><i class="bi bi-pencil me-2"></i>Modifier</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" href="#" onclick="confirmDelete(<?= $project['id'] ?>)"><i class="bi bi-trash me-2"></i>Supprimer</a></li>
-                                    </ul>
-                                </div>
                             </div>
                         </div>
                         <div class="card-body">
