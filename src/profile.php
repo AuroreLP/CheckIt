@@ -88,7 +88,7 @@ function deleteUserAccount($pdo, $userId) {
         
         // Supprimer les tâches de l'utilisateur
         $stmt = $pdo->prepare("
-            DELETE t FROM tasks t 
+            DELETE t FROM task t 
             INNER JOIN projects p ON t.project_id = p.id 
             WHERE p.user_id = ?
         ");
@@ -130,7 +130,7 @@ function getUserProfileStats($pdo, $userId) {
         // Nombre de tâches terminées
         $stmt = $pdo->prepare("
             SELECT COUNT(t.id) as completed 
-            FROM tasks t 
+            FROM task t 
             INNER JOIN projects p ON t.project_id = p.id 
             WHERE p.user_id = ? AND t.status = 1
         ");
@@ -140,7 +140,7 @@ function getUserProfileStats($pdo, $userId) {
         // Nombre total de tâches
         $stmt = $pdo->prepare("
             SELECT COUNT(t.id) as total 
-            FROM tasks t 
+            FROM task t 
             INNER JOIN projects p ON t.project_id = p.id 
             WHERE p.user_id = ?
         ");

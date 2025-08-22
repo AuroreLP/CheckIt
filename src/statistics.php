@@ -8,7 +8,7 @@ function getActiveProjectsByUser($pdo, $userId) {
     try {
         $sql = "SELECT DISTINCT p.id, p.title 
                 FROM projects p 
-                LEFT JOIN tasks t ON p.id = t.project_id 
+                LEFT JOIN task t ON p.id = t.project_id 
                 WHERE p.user_id = ? 
                 AND (t.status = 0 OR t.status IS NULL)";
         
@@ -27,7 +27,7 @@ function getActiveProjectsByUser($pdo, $userId) {
 function getTotalChecks($pdo, $userId) {
     try {
         $sql = "SELECT COUNT(t.id) as total_checks 
-                FROM tasks t 
+                FROM task t 
                 INNER JOIN projects p ON t.project_id = p.id 
                 WHERE p.user_id = ?";
         
@@ -47,7 +47,7 @@ function getTotalChecks($pdo, $userId) {
 function getCompletedTasks($pdo, $userId) {
     try {
         $sql = "SELECT COUNT(t.id) as completed_tasks 
-                FROM tasks t 
+                FROM task t 
                 INNER JOIN projects p ON t.project_id = p.id 
                 WHERE p.user_id = ? AND t.status = 1";
         
@@ -67,7 +67,7 @@ function getCompletedTasks($pdo, $userId) {
 function getPendingTasks($pdo, $userId) {
     try {
         $sql = "SELECT COUNT(t.id) as pending_tasks 
-                FROM tasks t 
+                FROM task t 
                 INNER JOIN projects p ON t.project_id = p.id 
                 WHERE p.user_id = ? AND t.status = 0";
         
@@ -94,7 +94,7 @@ function getStatisticsByDomain($pdo, $userId) {
                     SUM(CASE WHEN t.status = 1 THEN 1 ELSE 0 END) as completed_tasks
                 FROM domains d
                 LEFT JOIN projects p ON d.id = p.domain_id AND p.user_id = ?
-                LEFT JOIN tasks t ON p.id = t.project_id
+                LEFT JOIN task t ON p.id = t.project_id
                 GROUP BY d.id, d.name, d.icon
                 ORDER BY project_count DESC";
         

@@ -7,7 +7,7 @@
  */
 function verifyUserLoginPassword(PDO $pdo, string $username, string $password): bool|array
 {
-    $query = $pdo->prepare("SELECT * FROM users WHERE username = :username");
+    $query = $pdo->prepare("SELECT * FROM user WHERE username = :username");
     $query->bindValue(':username', $username, PDO::PARAM_STR);
     $query->execute();
     
@@ -39,7 +39,7 @@ function isUsernameExists(PDO $pdo, string $username): bool
  */
 function isEmailExists(PDO $pdo, string $email): bool 
 {
-    $query = $pdo->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
+    $query = $pdo->prepare("SELECT COUNT(*) FROM user WHERE email = :email");
     $query->bindValue(':email', $email, PDO::PARAM_STR);
     $query->execute();
     
@@ -81,7 +81,7 @@ function createUser(PDO $pdo, string $username, string $email, string $password)
  */
 function getUserById(PDO $pdo, int $userId): array|false 
 {
-    $query = $pdo->prepare("SELECT id, username, email, created_at, updated_at FROM users WHERE id = :id");
+    $query = $pdo->prepare("SELECT id, username, email, created_at, updated_at FROM user WHERE id = :id");
     $query->bindValue(':id', $userId, PDO::PARAM_INT);
     $query->execute();
     
@@ -93,7 +93,7 @@ function getUserById(PDO $pdo, int $userId): array|false
  */
 function getUserByUsername(PDO $pdo, string $username): array|false 
 {
-    $query = $pdo->prepare("SELECT id, username, email, created_at, updated_at FROM users WHERE username = :username");
+    $query = $pdo->prepare("SELECT id, username, email, created_at, updated_at FROM user WHERE username = :username");
     $query->bindValue(':username', $username, PDO::PARAM_STR);
     $query->execute();
     
@@ -105,7 +105,7 @@ function getUserByUsername(PDO $pdo, string $username): array|false
  */
 function getUserByEmail(PDO $pdo, string $email): array|false 
 {
-    $query = $pdo->prepare("SELECT id, username, email, created_at, updated_at FROM users WHERE email = :email");
+    $query = $pdo->prepare("SELECT id, username, email, created_at, updated_at FROM user WHERE email = :email");
     $query->bindValue(':email', $email, PDO::PARAM_STR);
     $query->execute();
     

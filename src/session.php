@@ -38,7 +38,7 @@ function getConnectedUserName() {
             }
             
             $user_id = $_SESSION['user_id'] ?? $_SESSION['user']['id'];
-            $stmt = $pdo->prepare("SELECT username FROM users WHERE id = ?");
+            $stmt = $pdo->prepare("SELECT username FROM user WHERE id = ?");
             $stmt->execute([$user_id]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             

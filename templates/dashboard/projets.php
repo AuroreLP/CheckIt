@@ -1,4 +1,22 @@
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+    <?php
+    // Gestion des messages de succès et d'erreur
+    if (isset($_GET['success'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            <?= htmlspecialchars($_GET['success']) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif;
+
+    if (isset($_GET['error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <?= htmlspecialchars($_GET['error']) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
     <h2>Mes Projets</h2>
     <div class="d-flex flex-column flex-md-row gap-3">
         <?php if (isUserConnected()) { ?>
@@ -32,14 +50,14 @@
                                     <?= htmlspecialchars($project['title']) ?>
                                 </h5>
                                 <div class="dropdown">
-                                    <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary px-2 py-1" data-bs-toggle="dropdown">
                                         <i class="bi bi-three-dots"></i>
                                     </button>
-                                    <ul class="dropdown-menu">
+                                    <ul class="dropdown-menu dropdown-menu-sm">
                                         <li><a class="dropdown-item" href="show-project.php?id=<?= $project['id'] ?>"><i class="bi bi-eye me-2"></i>Voir</a></li>
                                         <li><a class="dropdown-item" href="edit-project.php?id=<?= $project['id'] ?>"><i class="bi bi-pencil me-2"></i>Modifier</a></li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-danger" href="#" onclick="confirmDelete(<?= $project['id'] ?>)"><i class="bi bi-trash me-2"></i>Supprimer</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="confirmDelete(<?= $project['id'] ?>)"><i class="bi bi-trash me-2"></i>Supprimer</a></li>
                                     </ul>
                                 </div>
                             </div>
