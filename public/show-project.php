@@ -99,12 +99,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'updateTaskStatus' && isset($_
       <a href="edit-project.php?id=<?= $project_id ?>" class="btn btn-outline-primary flex-fill">
         <i class="bi bi-pencil"></i> Modifier
       </a>
-      <a href="mes-projets.php" class="btn btn-secondary mt-2 mt-md-0">
+      <a href="dashboard.php" class="btn btn-secondary mt-2 mt-md-0">
       Retour à la liste des projets
       </a>
       <form method="post" action="" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');" style="margin:0;" class="flex-fill">
         <input type="hidden" name="deleteProject" value="1">
-        <button type="submit" class="btn btn-danger w-100">
+        <button type="submit" class="btn  btn-danger w-100">
           <i class="bi bi-trash3-fill"></i> Supprimer
         </button>
       </form>
