@@ -162,13 +162,19 @@
         <div class="card-body">
             <!-- Formulaire d'ajout de tâche -->
             <form method="post" class="row gy-2 gx-3 align-items-end mb-4">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label">Nom de la tâche</label>
                     <input type="text" name="name" class="form-control" required>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">Description</label>
-                    <input type="text" name="description" class="form-control">
+                <div class="col-md-4">
+                    <label class="form-label">
+                        Description 
+                        <span class="form-text d-inline ms-2">
+                            <span id="charCountAdd">0</span>/200 caractères
+                        </span>
+                    </label>
+                    <input type="text" name="description" class="form-control" maxlength="200" 
+                        id="taskDescriptionAdd" onkeyup="updateCharCount('taskDescriptionAdd', 'charCountAdd')">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Phase</label>
@@ -185,7 +191,7 @@
                     <label class="form-label">Date limite</label>
                     <input type="date" name="deadline" class="form-control" required>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <button type="submit" name="saveTask" class="btn btn-primary w-100">
                         <i class="bi bi-plus-lg me-1"></i>Ajouter
                     </button>
@@ -231,10 +237,18 @@
                                             onclick="event.stopPropagation();">
                                                 <i class="bi bi-check-circle<?= ($task['status'] ? '-fill text-success' : ' text-muted') ?> fs-5"></i>
                                             </a>
-                                            
-                                            <span class="<?= $task['status'] ? 'text-muted' : 'fw-medium' ?> flex-grow-1">
-                                                <?= htmlspecialchars($task['name']) ?>
-                                            </span>
+                                            <div class="flex-grow-1">
+                                                <div class="<?= $task['status'] ? 'text-muted' : 'fw-medium' ?>">
+                                                    <?= htmlspecialchars($task['name']) ?>
+                                                </div>
+                                                
+                                                <!-- Affichage de la description si elle existe -->
+                                                <?php if (!empty(trim($task['description']))): ?>
+                                                    <div class="text-muted small mt-1">
+                                                        <?= htmlspecialchars($task['description']) ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
                                             
                                             <!-- Desktop seulement : badges à droite -->
                                             <div class="d-none d-md-flex gap-2 ms-3 me-3">
@@ -306,8 +320,15 @@
                                         </div>
                                         
                                         <div class="mb-3">
-                                            <label class="form-label">Description</label>
-                                            <textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($task['description']) ?></textarea>
+                                            <label class="form-label">
+                                                Description 
+                                                <span class="form-text d-inline ms-2">
+                                                    <span id="charCountEdit<?= $task['id'] ?>"><?= mb_strlen($task['description']) ?></span>/200 caractères
+                                                </span>
+                                            </label>
+                                            <textarea name="description" class="form-control" rows="3" maxlength="200"
+                                                      id="taskDescriptionEdit<?= $task['id'] ?>"
+                                                      onkeyup="updateCharCount('taskDescriptionEdit<?= $task['id'] ?>', 'charCountEdit<?= $task['id'] ?>')"><?= htmlspecialchars($task['description']) ?></textarea>
                                         </div>
                                         
                                         <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
@@ -346,5 +367,39 @@
     </div>
 </div>
 
-<!-- Include JS -->
+<!-- JAVASCRIPT POUR LE COMPTEUR --> 
+ <script>
+function updateCharCount(textareaId, counterId) {
+    const textarea = document.getElementById(textareaId);
+    const counter = document.getElementById(counterId);
+    const currentLength = textarea.value.length;
+    
+    counter.textContent = currentLength;
+    
+    // Changer la couleur selon la limite
+    if (currentLength > 180) {
+        counter.style.color = 'red';
+    } else if (currentLength > 150) {
+        counter.style.color = 'orange';
+    } else {
+        counter.style.color = '';
+    }
+}
+
+// Initialiser le compteur pour le champ d'ajout au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    const addField = document.getElementById('taskDescriptionAdd');
+    if (addField) {
+        updateCharCount('taskDescriptionAdd', 'charCountAdd');
+    }
+    
+    // Initialiser les compteurs pour les champs d'édition
+    <?php foreach ($tasks as $task): ?>
+    const editField<?= $task['id'] ?> = document.getElementById('taskDescriptionEdit<?= $task['id'] ?>');
+    if (editField<?= $task['id'] ?>) {
+        updateCharCount('taskDescriptionEdit<?= $task['id'] ?>', 'charCountEdit<?= $task['id'] ?>');
+    }
+    <?php endforeach; ?>
+});
+</script>
 <script src="assets/js/project-edit.js"></script>

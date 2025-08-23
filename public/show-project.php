@@ -61,6 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!in_array($phase, array_column(Phase::cases(), 'value'))) $errors[] = "Phase invalide.";
         if (empty($deadline)) $errors[] = "La date limite est requise.";
 
+        // Validation de la longueur de la description
+        if (mb_strlen($description) > 200) {
+            $errors[] = "La description ne peut pas dépasser 200 caractères (" . mb_strlen($description) . " caractères saisis).";
+        }
+
         if (empty($errors)) {
             addTask($pdo, $name, $phase, $deadline, $description, $project_id, 0);
             $success = 'Tâche ajoutée avec succès !';
@@ -79,6 +84,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($name)) $errors[] = "Le nom est requis.";
         if (!in_array($phase, array_column(Phase::cases(), 'value'))) $errors[] = "Phase invalide.";
         if (empty($deadline)) $errors[] = "La date limite est requise.";
+
+        // Validation de la longueur de la description
+        if (mb_strlen($description) > 200) {
+            $errors[] = "La description ne peut pas dépasser 200 caractères (" . mb_strlen($description) . " caractères saisis).";
+        }
 
         if (empty($errors)) {
             editTask($pdo, $taskId, $name, $phase, $deadline, $description);
