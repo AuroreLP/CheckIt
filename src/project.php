@@ -74,20 +74,71 @@ function getProjectById($pdo, $projectId) {
     }
 }
 
-/**
- * Version simple pour debug
- */
-function getProjectByIdSimple($pdo, $projectId) {
-    try {
-        $sql = "SELECT * FROM project WHERE id = ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$projectId]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        error_log("Erreur dans getProjectByIdSimple: " . $e->getMessage());
-        return false;
+// ENUMERATION POUR LES STATUTS DE PROJET
+enum ProjectStatus: string {
+    case Planification = 'planification';
+    case EnCours = 'en_cours';
+    case EnPause = 'en_pause';
+    case Termine = 'termine';
+    case Annule = 'annule';
+    
+    // Méthode pour obtenir le libellé français
+    public function getLabel(): string {
+        return match($this) {
+            self::Planification => 'Planification',
+            self::EnCours => 'En cours',
+            self::EnPause => 'En pause',
+            self::Termine => 'Terminé',
+            self::Annule => 'Annulé'
+        };
+    }
+    
+    // Méthode pour obtenir la classe CSS Bootstrap
+    public function getBadgeClass(): string {
+        return match($this) {
+            self::Planification => 'bg-secondary',
+            self::EnCours => 'bg-primary',
+            self::EnPause => 'bg-warning text-dark',
+            self::Termine => 'bg-success',
+            self::Annule => 'bg-danger'
+        };
+    }
+    
+    // Méthode pour obtenir l'icône Bootstrap
+    public function getIcon(): string {
+        return match($this) {
+            self::Planification => 'bi-calendar-plus',
+            self::EnCours => 'bi-play-circle',
+            self::EnPause => 'bi-pause-circle',
+            self::Termine => 'bi-check-circle',
+            self::Annule => 'bi-x-circle'
+        };
     }
 }
+
+// FONCTION POUR CALCULER LA PROGRESSION D'UN PROJET
+function getProjectProgress(PDO $pdo, int $projectId): array {
+    $stmt = $pdo->prepare("
+        SELECT 
+            COUNT(*) as total_tasks,
+            SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as completed_tasks
+        FROM task 
+        WHERE project_id = :project_id
+    ");
+    $stmt->execute(['project_id' => $projectId]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $totalTasks = (int)$result['total_tasks'];
+    $completedTasks = (int)$result['completed_tasks'];
+    $percentage = $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100, 1) : 0;
+    
+    return [
+        'total_tasks' => $totalTasks,
+        'completed_tasks' => $completedTasks,
+        'percentage' => $percentage
+    ];
+}
+
 
 function saveProject(PDO $pdo, string $title, int $user_id, int $domain_id, ?string $needs=null, ?int $id=null):int|false
 {
@@ -124,21 +175,34 @@ function saveProject(PDO $pdo, string $title, int $user_id, int $domain_id, ?str
 }
 
 function updateProject(PDO $pdo, int $project_id, array $data): bool {
-  if (!isset($data['title']) || !isset($data['domain_id'])) {
-      return false; // Données incomplètes
-  }
-
-  $query = $pdo->prepare("UPDATE project SET title = :title, needs = :needs, domain_id = :domain_id WHERE id = :id");
-  $query->bindValue(':title', $data['title'], PDO::PARAM_STR);
-  $query->bindValue(':domain_id', $data['domain_id'], PDO::PARAM_INT);
-  $query->bindValue(':needs', $data['needs'] ?? '', PDO::PARAM_STR);
-  $query->bindValue(':id', $project_id, PDO::PARAM_INT);
-
-  return $query->execute();
+    if (!isset($data['title']) || !isset($data['domain_id'])) {
+        return false; // Données incomplètes
+    }
+    
+    $query = $pdo->prepare("
+        UPDATE project SET 
+            title = :title, 
+            needs = :needs, 
+            domain_id = :domain_id,
+            start_date = :start_date,
+            end_date = :end_date,
+            status = :status
+        WHERE id = :id
+    ");
+    
+    $query->bindValue(':title', $data['title'], PDO::PARAM_STR);
+    $query->bindValue(':domain_id', $data['domain_id'], PDO::PARAM_INT);
+    $query->bindValue(':needs', $data['needs'] ?? '', PDO::PARAM_STR);
+    $query->bindValue(':start_date', $data['start_date'] ?? null, PDO::PARAM_STR);
+    $query->bindValue(':end_date', $data['end_date'] ?? null, PDO::PARAM_STR);
+    $query->bindValue(':status', $data['status'] ?? 'planification', PDO::PARAM_STR);
+    $query->bindValue(':id', $project_id, PDO::PARAM_INT);
+    
+    return $query->execute();
 }
 
 /**
- * Supprime un projet et toutes ses tâches associées - VERSION CORRIGÉE
+ * Supprime un projet et toutes ses tâches associées
  */
 function deleteProject($pdo, $projectId) {
     try {

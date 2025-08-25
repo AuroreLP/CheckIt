@@ -13,6 +13,7 @@
   --bs-danger: #A6A0D8;
   --bs-info: #17a2b8;
   --bs-info-rgb: 23, 162, 184;
+  --bg-danger: #A6A0D8;
 }
 
 /* BOUTONS PRINCIPAUX */
@@ -362,6 +363,23 @@ form i {
     /* Hérite des styles définis précédemment */
 }
 
+/* SECTION informations du projet - PROGRESS BAR */
+.progress-complete {
+    background-color: #058d7d !important; /* Vert pour 100% */
+}
+
+.progress-high {
+    background-color: #66c6ba !important; /* Turquoise pour 75%+ */
+}
+
+.progress-medium {
+    background-color: #649daeff !important; /* Bleu pour 50%+ */
+}
+
+.progress-low {
+    background-color: #A6A0D8 !important; /* Violet pour <50% */
+}
+
 /* PAGE PROJET - SECTION LISTE DES TÂCHES */
 /* Style responsive pour les badges */
 @media (max-width: 768px) {
@@ -392,13 +410,9 @@ form i {
     transition: transform 0.2s ease;
 }
 
-/* Style pour les tâches en retard */
-.task-overdue {
-    border-left: 4px solid #fa6292 !important;
-    background-color: #fff5f5 !important;
-}
+/* BORDURES DES TÂCHES */
 
-.task-due-soon {
-    border-left: 4px solid #f9f517 !important;
-    background-color: #fffef5 !important;
+/* Bordure normale (par défaut) */
+.accordion-item {
+    border-color: #dee2e6 !important;
 }

@@ -1,4 +1,3 @@
-<!-- templates/project/show.php -->
 
 <!-- Messages d'alerte -->
 <?php if ($success): ?>
@@ -23,130 +22,117 @@
 
 <div class="container">
     <!-- En-tête du projet -->
-    <div class="d-flex justify-content-between align-items-end mt-2">
+    <div class="d-flex justify-content-between align-items-end mt-2 mb-4">
         <h1><?= htmlspecialchars($project['title']) ?></h1>
-        <span class="badge rounded-pill text-bg-primary fs-4 mb-2">
-            <i class="bi <?= htmlspecialchars($project['domain_icon'] ?? '') ?>"></i>
-            <?= htmlspecialchars($project['domain_name'] ?? 'Domaine inconnu') ?>
-        </span>
+        <div class="d-flex gap-2">
+            <?php 
+            $currentStatus = ProjectStatus::tryFrom($project['status'] ?? 'planification');
+            if ($currentStatus): 
+            ?>
+                <span class="badge rounded-pill fs-5 <?= $currentStatus->getBadgeClass() ?>">
+                    <i class="bi <?= $currentStatus->getIcon() ?>"></i>
+                    <?= $currentStatus->getLabel() ?>
+                </span>
+            <?php endif; ?>
+            <span class="badge rounded-pill text-bg-primary fs-5">
+                <i class="bi <?= htmlspecialchars($project['domain_icon'] ?? '') ?>"></i>
+                <?= htmlspecialchars($project['domain_name'] ?? 'Domaine inconnu') ?>
+            </span>
+        </div>
     </div>
 
-    <!-- Section éditable du projet -->
+    <!-- Section informations du projet -->
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">
                 <i class="bi bi-info-circle me-2"></i>
                 Informations du projet
             </h5>
-            <button type="button" 
-                    id="editProjectBtn" 
-                    class="btn btn-outline-primary btn-sm"
-                    data-original-title="<?= htmlspecialchars($project['title']) ?>"
-                    data-original-domain-id="<?= htmlspecialchars($project['domain_id']) ?>"
-                    data-original-needs="<?= htmlspecialchars($project['needs'] ?? '') ?>">
-                <i class="bi bi-pencil me-1"></i>Modifier
-            </button>
+            <a href="edit-project.php?id=<?= $project_id ?>" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-pencil me-1"></i>Modifier le projet
+            </a>
         </div>
         <div class="card-body">
-            <!-- Mode lecture -->
-            <div id="projectDisplay">
-                <div class="row gy-3 gy-md-0">
-                    <!-- Colonne de gauche : Titre + Domaine -->
-                    <!-- Mobile: pleine largeur, Desktop: 50% -->
-                    <div class="col-12 col-md-6 project-info-left">
-                        <!-- Titre -->
-                        <div class="mb-3 mb-md-4">
-                            <strong class="d-block mb-1">Titre :</strong>
-                            <p class="mb-0 fs-5 fs-md-4 fw-medium"><?= htmlspecialchars($project['title']) ?></p>
+            <div class="row gy-3 gy-md-0">
+                <!-- Colonne de gauche : Infos principales -->
+                <div class="col-12 col-md-6">
+                    <!-- Dates du projet -->
+                    <?php if (!empty($project['start_date']) || !empty($project['end_date'])): ?>
+                        <div class="mb-3">
+                            <strong class="d-block mb-2">
+                                <i class="bi bi-calendar-range me-2"></i>Calendrier du projet
+                            </strong>
+                            <div class="d-flex flex-column gap-1">
+                                <?php if (!empty($project['start_date'])): ?>
+                                    <div>
+                                        <strong>Début :</strong> 
+                                        <?= date('d/m/Y', strtotime($project['start_date'])) ?>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <?php if (!empty($project['end_date'])): ?>
+                                    <div>
+                                        <strong>Fin prévue :</strong> 
+                                        <?= date('d/m/Y', strtotime($project['end_date'])) ?>
+                                        
+                                        <!-- Indicateur si projet en retard -->
+                                        <?php 
+                                        $today = new DateTime();
+                                        $endDate = new DateTime($project['end_date']);
+                                        $currentStatus = ProjectStatus::tryFrom($project['status'] ?? 'planification');
+                                        
+                                        if ($endDate < $today && $currentStatus !== ProjectStatus::Termine): ?>
+                                            <span class="badge bg-danger ms-2">
+                                                <i class="bi bi-exclamation-triangle"></i> En retard
+                                            </span>
+                                        <?php elseif ($endDate <= (clone $today)->modify('+7 days') && $currentStatus !== ProjectStatus::Termine): ?>
+                                            <span class="badge bg-warning text-dark ms-2">
+                                                <i class="bi bi-clock"></i> Échéance proche
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                        <!-- Domaine -->
-                        <div class="mb-3 mb-md-4">
-                            <strong class="d-block mb-1">Domaine :</strong>
-                            <p class="mb-0">
-                                <i class="bi <?= htmlspecialchars($project['domain_icon'] ?? 'bi-folder') ?> me-2 text-primary"></i>
-                                <span class="fw-medium"><?= htmlspecialchars($project['domain_name'] ?? 'Non défini') ?></span>
-                            </p>
+                    <?php endif; ?>
+                    
+                    <!-- Progression du projet -->
+                    <?php if ($projectProgress['total_tasks'] > 0): ?>
+                        <div class="mb-3">
+                            <strong class="d-block mb-2">
+                                <i class="bi bi-bar-chart me-2"></i>Progression
+                            </strong>
+                            <div class="d-flex align-items-center">
+                                <div class="progress flex-grow-1 me-3" style="height: 25px;">
+                                    <div class="progress-bar <?= $projectProgress['percentage'] == 100 ? 'progress-complete' : ($projectProgress['percentage'] >= 75 ? 'progress-high' : ($projectProgress['percentage'] >= 50 ? 'progress-medium' : 'progress-low')) ?>" 
+                                    style="width: <?= $projectProgress['percentage'] ?>%" 
+                                    aria-valuenow="<?= $projectProgress['percentage'] ?>" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100">
+                                    <?= $projectProgress['percentage'] ?>%
+                                </div>
+                                </div>
+                                <span class="text-muted fw-medium">
+                                    <?= $projectProgress['completed_tasks'] ?>/<?= $projectProgress['total_tasks'] ?> tâches
+                                </span>
+                            </div>
                         </div>
-                    </div>
-    
-                    <!-- Colonne de droite : Besoins -->
-                    <!-- Mobile: pleine largeur (en dessous), Desktop: 50% (à côté) -->
-                    <div class="col-12 col-md-6 project-info-right">
-                        <strong class="d-block mb-2">Besoins du projet :</strong>
-                        <div class="needs-content">
-                            <?php if (!empty($project['needs'])): ?>
-                                <?= nl2br(htmlspecialchars($project['needs'])) ?>
-                            <?php else: ?>
-                                <span class="text-muted fst-italic">Aucun besoin spécifié pour ce projet.</span>
-                            <?php endif; ?>
-                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Colonne de droite : Besoins -->
+                <div class="col-12 col-md-6">
+                    <strong class="d-block mb-2">
+                        <i class="bi bi-list-ul me-2"></i>Besoins du projet
+                    </strong>
+                    <div class="needs-content bg-light p-3 rounded">
+                        <?php if (!empty($project['needs'])): ?>
+                            <?= nl2br(htmlspecialchars($project['needs'])) ?>
+                        <?php else: ?>
+                            <span class="text-muted fst-italic">Aucun besoin spécifié pour ce projet.</span>
+                        <?php endif; ?>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Mode édition -->
-            <div id="projectEdit" style="display: none;">
-                <form action="" method="post">
-                    <input type="hidden" name="updateProject" value="1">
-                    
-                    <div class="row gy-3 gy-md-0">
-                        <!-- Colonne de gauche : Titre + Domaine -->
-                        <!-- Mobile: pleine largeur, Desktop: 50% -->
-                        <div class="col-12 col-md-6 project-info-left">
-                            <!-- Titre -->
-                            <div class="mb-3 mb-md-4">
-                                <label for="projectTitle" class="form-label fw-bold">Titre *</label>
-                                <input type="text" 
-                                    name="title" 
-                                    id="projectTitle" 
-                                    class="form-control" 
-                                    value="<?= htmlspecialchars($project['title']) ?>" 
-                                    required
-                                    placeholder="Nom du projet">
-                            </div>
-                            
-                            <!-- Domaine -->
-                            <div class="mb-3 mb-md-4">
-                                <label for="projectDomain" class="form-label fw-bold">Domaine *</label>
-                                <select name="domain_id" id="projectDomain" class="form-select" required>
-                                    <option value="">-- Sélectionnez un domaine --</option>
-                                    <?php foreach ($domains as $domain): ?>
-                                        <option value="<?= $domain['id'] ?>" 
-                                                <?= ($project['domain_id'] == $domain['id']) ? 'selected' : '' ?>>
-                                            <i class="bi <?= htmlspecialchars($domain['icon'] ?? 'bi-folder') ?>"></i>
-                                            <?= htmlspecialchars($domain['name']) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <!-- Colonne de droite : Besoins -->
-                        <!-- Mobile: pleine largeur (en dessous), Desktop: 50% (à côté) -->
-                        <div class="col-12 col-md-6 project-info-right">
-                            <label for="projectNeeds" class="form-label fw-bold d-block mb-2">Besoins du projet</label>
-                            <textarea name="needs" 
-                                    id="projectNeeds" 
-                                    class="form-control needs-textarea" 
-                                    rows="6"
-                                    placeholder="Décrivez les besoins, objectifs et contraintes de ce projet..."><?= htmlspecialchars($project['needs'] ?? '') ?></textarea>
-                            <div class="form-text mt-1">
-                                <i class="bi bi-info-circle me-1"></i>
-                                Détaillez les fonctionnalités attendues, les contraintes techniques, les objectifs business...
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Boutons d'action -->
-                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-start mt-4 pt-3 border-top">
-                        <button type="submit" class="btn btn-primary">
-                            Sauvegarder les modifications
-                        </button>
-                        <button type="button" id="cancelEditBtn" class="btn btn-secondary">
-                            Annuler
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
@@ -155,18 +141,18 @@
     <div class="card mb-4">
         <div class="card-header">
             <h5 class="mb-0">
-                <i class="bi bi-list-task me-2"></i>
+                <i class="bi bi-plus-circle me-2"></i>
                 Ajouter une tâche au projet
             </h5>
         </div>
         <div class="card-body">
             <!-- Formulaire d'ajout de tâche -->
             <form method="post" class="row gy-2 gx-3 align-items-end mb-4">
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label class="form-label">Nom de la tâche</label>
                     <input type="text" name="name" class="form-control" required>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label">
                         Description 
                         <span class="form-text d-inline ms-2">
@@ -174,7 +160,7 @@
                         </span>
                     </label>
                     <input type="text" name="description" class="form-control" maxlength="200" 
-                        id="taskDescriptionAdd" onkeyup="updateCharCount('taskDescriptionAdd', 'charCountAdd')">
+                           id="taskDescriptionAdd" onkeyup="updateCharCount('taskDescriptionAdd', 'charCountAdd')">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Phase</label>
@@ -191,7 +177,7 @@
                     <label class="form-label">Date limite</label>
                     <input type="date" name="deadline" class="form-control" required>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <button type="submit" name="saveTask" class="btn btn-primary w-100">
                         <i class="bi bi-plus-lg me-1"></i>Ajouter
                     </button>
@@ -206,6 +192,11 @@
             <h5 class="mb-0">
                 <i class="bi bi-list-task me-2"></i>
                 Tâches du projet
+                <?php if ($projectProgress['total_tasks'] > 0): ?>
+                    <span class="badge bg-primary ms-2">
+                        <?= $projectProgress['total_tasks'] ?> tâche<?= $projectProgress['total_tasks'] > 1 ? 's' : '' ?>
+                    </span>
+                <?php endif; ?>
             </h5>
         </div>
 
@@ -220,7 +211,7 @@
                         $isOverdue = !$task['status'] && $deadline < $today;
                         $isDueSoon = !$task['status'] && !$isOverdue && $deadline <= (clone $today)->modify('+3 days');
                         ?>
-                        
+
                         <!-- Item avec bordure colorée Bootstrap -->
                         <div class="accordion-item mb-3 <?= $isOverdue ? 'border-danger border-3' : ($isDueSoon ? 'border-warning border-3' : '') ?>">
                             <h2 class="accordion-header">
@@ -235,8 +226,9 @@
                                             <a class="me-3 text-decoration-none" 
                                             href="?id=<?= $project_id ?>&action=updateTaskStatus&task_id=<?= $task['id'] ?>&status=<?= !$task['status'] ?>"
                                             onclick="event.stopPropagation();">
-                                                <i class="bi bi-check-circle<?= ($task['status'] ? '-fill text-success' : ' text-muted') ?> fs-5"></i>
+                                                <i class="bi bi-check-circle<?= ($task['status'] ? '-fill text-primary' : ' text-muted') ?> fs-5"></i>
                                             </a>
+                                            
                                             <div class="flex-grow-1">
                                                 <div class="<?= $task['status'] ? 'text-muted' : 'fw-medium' ?>">
                                                     <?= htmlspecialchars($task['name']) ?>
@@ -347,18 +339,29 @@
                         </div>
                     <?php endforeach; ?>
                 </div>
+            <?php else: ?>
+                <div class="text-center py-4">
+                    <i class="bi bi-list-task text-muted" style="font-size: 3rem;"></i>
+                    <h5 class="text-muted mt-3">Aucune tâche pour ce projet</h5>
+                    <p class="text-muted">Commencez par ajouter votre première tâche !</p>
+                </div>
             <?php endif; ?>
         </div>
     </div>
 
-        <!-- Actions du projet -->
+    <!-- Actions du projet -->
     <div class="d-flex justify-content-between align-items-center mb-4 mt-4 flex-wrap gap-2">
-        <a href="dashboard.php?tab=projets" class="btn btn-secondary">
-            <i class="bi bi-arrow-left me-2"></i>Retour à la liste des projets
-        </a>
+        <div class="d-flex gap-2">
+            <a href="dashboard.php?tab=projets" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Retour à la liste des projets
+            </a>
+            <a href="edit-project.php?id=<?= $project_id ?>" class="btn btn-primary">
+                <i class="bi bi-pencil me-2"></i>Modifier le projet
+            </a>
+        </div>
         
         <form method="post" class="d-inline" 
-              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');">
+              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet et toutes ses tâches ?');">
             <input type="hidden" name="deleteProject" value="1">
             <button type="submit" class="btn btn-danger">
                 <i class="bi bi-trash3-fill me-2"></i>Supprimer le projet
@@ -367,8 +370,8 @@
     </div>
 </div>
 
-<!-- JAVASCRIPT POUR LE COMPTEUR --> 
- <script>
+<!-- Script JavaScript pour le compteur de caractères -->
+<script>
 function updateCharCount(textareaId, counterId) {
     const textarea = document.getElementById(textareaId);
     const counter = document.getElementById(counterId);
