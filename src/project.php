@@ -3,7 +3,7 @@
 function getProjectsByUserId(PDO $pdo, int $userId ):array
 {
   $query = $pdo->prepare("SELECT project.*, domain.name as domain_name, 
-                          domain.icon as domain_icon FROM project
+                          domain.description as domain_description FROM project
                           JOIN domain ON domain.id = project.domain_id 
                           WHERE user_id = :user_id");
   $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
@@ -35,7 +35,7 @@ function getProjectsByDomain(PDO $pdo, $domain_id = null): array
 
 function getProjectsByUserAndDomain(PDO $pdo, int $userId, $domain_id = null): array
 {
-    $sql = 'SELECT project.*, domain.name as domain_name, domain.icon as domain_icon 
+    $sql = 'SELECT project.*, domain.name as domain_name, domain.description as domain_description 
             FROM project 
             JOIN domain ON project.domain_id = domain.id 
             WHERE project.user_id = :user_id';
@@ -60,7 +60,7 @@ function getProjectsByUserAndDomain(PDO $pdo, int $userId, $domain_id = null): a
  */
 function getProjectById($pdo, $projectId) {
     try {
-        $sql = "SELECT p.*, d.name as domain_name, d.icon as domain_icon 
+        $sql = "SELECT p.*, d.name as domain_name, d.description as domain_description 
                 FROM project p 
                 LEFT JOIN domain d ON p.domain_id = d.id 
                 WHERE p.id = ?";
