@@ -25,14 +25,79 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'projets';
 switch ($activeTab) {
     case 'projets':
         $domains = getAllDomains($pdo);
-        $projects = getProjectsByUserAndDomain($pdo, $userId, $domain_id);
+        $allProjects = getProjectsByUserAndDomain($pdo, $userId, $domain_id);
+        
+        // Séparer les projets actifs et terminés avec toutes les données préparées
+        $activeProjects = [];
+        $completedProjects = [];
+        
+        foreach ($allProjects as $project) {
+            // Calculer la progression
+            $project['progress'] = getProjectProgress($pdo, $project['id']);
+            
+            // Récupérer le statut
+            $project['status_enum'] = ProjectStatus::tryFrom($project['status'] ?? 'planification');
+            
+            // Récupérer et préparer les prochaines tâches
+            $allTasks = getProjectTasks($pdo, $project['id']);
+            $pendingTasks = array_filter($allTasks, function($task) {
+                return !$task['status']; // Tâches non terminées
+            });
+            
+            // Trier par deadline (les plus proches en premier)
+            usort($pendingTasks, function($a, $b) {
+                return strtotime($a['deadline']) - strtotime($b['deadline']);
+            });
+            
+            $project['next_tasks'] = array_slice($pendingTasks, 0, 2);
+            
+            // Calculer les alertes de dates pour les tâches
+            foreach ($project['next_tasks'] as &$task) {
+                $today = new DateTime();
+                $today->setTime(0, 0, 0);
+                $deadline = new DateTime($task['deadline']);
+                $deadline->setTime(0, 0, 0);
+                
+                $task['is_overdue'] = $deadline < $today;
+                $task['is_due_soon'] = !$task['is_overdue'] && $deadline <= (clone $today)->modify('+3 days');
+            }
+            
+            // Calculer les alertes de dates pour le projet
+            $project['date_alerts'] = [];
+            if (!empty($project['end_date'])) {
+                $today = new DateTime();
+                $endDate = new DateTime($project['end_date']);
+                
+                if ($endDate < $today && $project['status_enum'] !== ProjectStatus::Termine) {
+                    $project['date_alerts'] = [
+                        'type' => 'danger',
+                        'text' => 'En retard',
+                        'icon' => 'bi-exclamation-triangle'
+                    ];
+                } elseif ($endDate <= (clone $today)->modify('+7 days') && $project['status_enum'] !== ProjectStatus::Termine) {
+                    $project['date_alerts'] = [
+                        'type' => 'warning',
+                        'text' => 'Échéance proche',
+                        'icon' => 'bi-clock'
+                    ];
+                }
+            }
+            
+            // Classer le projet (actif ou terminé)
+            if ($project['status_enum'] === ProjectStatus::Termine && 
+                $project['progress']['percentage'] == 100) {
+                $completedProjects[] = $project;
+            } else {
+                $activeProjects[] = $project;
+            }
+        }
         break;
-    
+        
     case 'domaines':
         $domains = getAllDomains($pdo);
         // Ajouter ici la logique pour récupérer les statistiques des domaines
         break;
-    
+        
     case 'statistiques':
         // Calculer les statistiques
         $totalProjects = count(getProjectsByUserAndDomain($pdo, $userId, null));
@@ -45,7 +110,7 @@ switch ($activeTab) {
         $domainStats = getStatisticsByDomain($pdo, $userId);
         $recentProjects = getRecentProjects($pdo, $userId);
         break;
-    
+        
     case 'profil':
         // Récupérer les données du profil utilisateur
         $userProfile = getUserProfile($pdo, $userId);
@@ -67,7 +132,7 @@ require_once __DIR__ . '/../templates/header.php';
         <div class="col-md-3 mb-4">
             <?php require_once __DIR__ . '/../templates/dashboard/sidebar.php'; ?>
         </div>
-
+        
         <!-- Contenu principal -->
         <div class="col-md-9">
             <div class="tab-content">

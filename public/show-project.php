@@ -1,5 +1,5 @@
 <?php
-// public/show-project.php - Version mise à jour avec nouvelles fonctionnalités
+ob_start();
 require_once __DIR__ . '/../templates/header.php';
 require_once __DIR__ . '/../src/pdo.php';
 require_once __DIR__ . '/../src/project.php';
@@ -119,4 +119,5 @@ if (isset($_GET['action'])) {
 include __DIR__ . '/../templates/project/show.php';
 
 require_once __DIR__ . '/../templates/footer.php';
+ob_end_flush();
 ?>

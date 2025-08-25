@@ -1,15 +1,16 @@
+<!-- templates/dashboard/projets.php - Template HTML pur -->
+
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
-    <?php
-    // Gestion des messages de succès et d'erreur
-    if (isset($_GET['success'])): ?>
+    <!-- Messages d'alerte -->
+    <?php if (isset($_GET['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="bi bi-check-circle me-2"></i>
             <?= htmlspecialchars($_GET['success']) ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    <?php endif;
+    <?php endif; ?>
 
-    if (isset($_GET['error'])): ?>
+    <?php if (isset($_GET['error'])): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="bi bi-exclamation-triangle me-2"></i>
             <?= htmlspecialchars($_GET['error']) ?>
@@ -19,11 +20,9 @@
 
     <h2>Mes Projets</h2>
     <div class="d-flex flex-column flex-md-row gap-3">
-        <?php if (isUserConnected()) { ?>
-            <a href="new-project.php" class="btn btn-primary">
-                <i class="bi bi-plus-lg me-2"></i>Ajouter un projet
-            </a>
-        <?php } ?>
+        <a href="new-project.php" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>Ajouter un projet
+        </a>
         <form method="get" action="dashboard.php" class="d-inline-block">
             <select name="domain" id="domain" onchange="this.form.submit()" class="form-select" style="width: auto;">
                 <option value="">Filtrer par domaine</option>
@@ -39,9 +38,18 @@
 </div>
 
 <div class="row">
-    <?php if (isUserConnected()) {
-        if ($projects) {
-            foreach ($projects as $project) { ?>
+    <?php if (!empty($activeProjects) || !empty($completedProjects)): ?>
+        
+        <!-- PROJETS ACTIFS -->
+        <?php if (!empty($activeProjects)): ?>
+            <div class="col-12 mb-4">
+                <h3 class="text-primary mb-3">
+                    <i class="bi bi-play-circle me-2"></i>Projets actifs 
+                    <span class="badge bg-primary ms-2"><?= count($activeProjects) ?></span>
+                </h3>
+            </div>
+            
+            <?php foreach ($activeProjects as $project): ?>
                 <div class="col-md-6 col-lg-4 mb-3">
                     <div class="card h-100">
                         <div class="card-header">
@@ -49,71 +57,201 @@
                                 <h5 class="card-title mb-0 text-truncate">
                                     <?= htmlspecialchars($project['title']) ?>
                                 </h5>
+                                <span class="badge rounded-pill bg-primary px-3 py-2">
+                                    <?= htmlspecialchars($project['domain_name'] ?? 'Domaine inconnu') ?>
+                                </span>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <?php
-                                $tasks = getProjectTasks($pdo, $project['id']);
-                                if ($tasks) {
-                                    $tasks = array_slice($tasks, 0, 3); // Limiter à 3 tâches
-                            ?>
-                            <ul class="list-unstyled mb-3">
-                                <?php foreach ($tasks as $task) { ?>
-                                    <li class="d-flex align-items-center mb-2">
-                                        <a class="me-2 text-decoration-none"
-                                          href="?id=<?= $task['id'] ?>&action=updateTaskStatus&redirect=dashboard&task_id=<?= $task['id'] ?>&status=<?= !$task['status'] ?>&tab=projets<?= $domain_id ? '&domain=' . $domain_id : '' ?>">
-                                          <i class="bi bi-check-circle<?= ($task['status'] ? '-fill text-success' : ' text-muted') ?>"></i>
-                                        </a>
-                                        <span class="<?= $task['status'] ? 'text-decoration-line-through text-muted' : '' ?>">
-                                            <?= htmlspecialchars($task['name']) ?>
-                                        </span>
-                                    </li>
-                                <?php } ?>
-                            </ul>
-                            <?php 
-                                $totalTasks = count(getProjectTasks($pdo, $project['id']));
-                                if ($totalTasks > 3) {
-                                    echo '<small class="text-muted">... et ' . ($totalTasks - 3) . ' autres tâches</small>';
-                                }
-                            } ?>
+                        <div class="card-body d-flex flex-column">
+                            <!-- Statut et domaine -->
+                            <div class="mb-3">                                
+                                <!-- Dates du projet -->
+                                <?php if (!empty($project['start_date']) || !empty($project['end_date'])): ?>
+                                    <div class="small text-muted mb-2">               
+                                        <?php if (!empty($project['end_date'])): ?>
+                                            <i class="bi bi-calendar-check me-1"></i>
+                                            Fin prévue le <strong><?= date('d/m/Y', strtotime($project['end_date'])) ?></strong> 
+                                            
+                                            <!-- Alertes de dates -->
+                                            <?php if (!empty($project['date_alerts'])): ?>
+                                                <span class="badge bg-<?= $project['date_alerts']['type'] ?> ms-1 <?= $project['date_alerts']['type'] === 'warning' ? 'text-dark' : '' ?>">
+                                                    <i class="bi <?= $project['date_alerts']['icon'] ?>"></i>
+                                                </span>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Barre de progression -->
+                            <?php if ($project['progress']['total_tasks'] > 0): ?>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <small class="text-muted fw-medium">Progression</small>
+                                        <small class="text-muted">
+                                            <?= $project['progress']['completed_tasks'] ?>/<?= $project['progress']['total_tasks'] ?> tâches
+                                        </small>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar <?= $project['progress']['percentage'] == 100 ? 'progress-complete' : ($project['progress']['percentage'] >= 75 ? 'progress-high' : ($project['progress']['percentage'] >= 50 ? 'progress-medium' : 'progress-low')) ?>" 
+                                             style="width: <?= $project['progress']['percentage'] ?>%"
+                                             title="<?= $project['progress']['percentage'] ?>% complété">
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
+                            <!-- Prochaines tâches -->
+                            <?php if (!empty($project['next_tasks'])): ?>
+                                <div class="mb-3">
+                                    <small class="text-muted fw-medium d-block mb-2">
+                                        Les deux prochaines tâches:
+                                    </small>
+                                    <ul class="list-unstyled mb-0">
+                                        <?php foreach ($project['next_tasks'] as $task): ?>
+                                            <li class="d-flex align-items-center justify-content-between mb-2">
+                                                <div class="d-flex align-items-center flex-grow-1">
+                                                    <a class="me-2 text-decoration-none"
+                                                       href="?id=<?= $task['id'] ?>&action=updateTaskStatus&redirect=dashboard&task_id=<?= $task['id'] ?>&status=1&tab=projets<?= $domain_id ? '&domain=' . $domain_id : '' ?>">
+                                                        <i class="bi bi-check-circle text-muted"></i>
+                                                    </a>
+                                                    <div class="flex-grow-1">
+                                                        <div class="small fw-medium">
+                                                            <?= htmlspecialchars($task['name']) ?>
+                                                        </div>
+                                                        <?php if (!empty(trim($task['description']))): ?>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex flex-column align-items-end gap-1">
+                                                    <span class="badge <?= $task['is_overdue'] ? 'bg-danger' : ($task['is_due_soon'] ? 'bg-warning text-dark' : 'bg-secondary') ?>" 
+                                                          style="font-size: 0.65rem;">
+                                                        <?= date('d/m', strtotime($task['deadline'])) ?>
+                                                    </span>
+                                                </div>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                            <?php elseif ($project['progress']['total_tasks'] > 0): ?>
+                                <div class="mb-3">
+                                    <small class="text-muted fw-medium d-block mb-2">
+                                        <i class="bi bi-check-all me-1"></i>Tâches
+                                    </small>
+                                    <p class="text-muted small mb-0">
+                                        <i class="bi bi-check-circle-fill text-success me-1"></i>
+                                        Toutes les tâches sont terminées !
+                                    </p>
+                                </div>
+                            <?php else: ?>
+                                <div class="mb-3">
+                                    <small class="text-muted fw-medium d-block mb-2">
+                                        <i class="bi bi-list-task me-1"></i>Tâches
+                                    </small>
+                                    <p class="text-muted small mb-0 fst-italic">Aucune tâche créée</p>
+                                </div>
+                            <?php endif; ?>
                             
+                            <!-- Boutons d'action -->
                             <div class="mt-auto">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <a href="show-project.php?id=<?= $project['id'] ?>" class="btn btn-primary btn-sm">Voir le projet</a>
-                                    <span class="badge rounded-pill bg-primary">
-                                        <i class="bi <?= htmlspecialchars($project['domain_icon'] ?? 'bi-folder') ?>"></i>
-                                        <?= htmlspecialchars($project['domain_name'] ?? 'Domaine inconnu') ?>
-                                    </span>
+                                    <a href="show-project.php?id=<?= $project['id'] ?>" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-eye me-1"></i>Voir le projet
+                                    </a>
+                                    
+                                    <?php if ($project['progress']['total_tasks'] > 2): ?>
+                                        <small class="text-muted">
+                                            +<?= $project['progress']['total_tasks'] - 2 ?> autres tâches
+                                        </small>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            <?php }
-        } else { ?>
-            <div class="col-12">
-                <div class="text-center py-5">
-                    <i class="bi bi-folder-x display-1 text-muted"></i>
-                    <h4 class="mt-3">Aucun projet trouvé</h4>
-                    <p class="text-muted">
-                        <?php if ($domain_id) { ?>
-                            Aucun projet dans ce domaine.
-                        <?php } else { ?>
-                            Créez votre premier projet pour commencer !
-                        <?php } ?>
-                    </p>
-                    <a href="new-project.php" class="btn btn-primary">
-                        <i class="bi bi-plus-lg me-2"></i>Créer un projet
-                    </a>
-                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+        
+        <!-- PROJETS TERMINÉS -->
+        <?php if (!empty($completedProjects)): ?>
+            <div class="col-12 mb-3 mt-5">
+                <h3 class="text-primary mb-3">
+                    <i class="bi bi-check-circle me-2"></i>Projets terminés 
+                    <span class="badge bg-primary ms-2"><?= count($completedProjects) ?></span>
+                </h3>
             </div>
-        <?php }
-    } else { ?>
+            
+            <?php foreach ($completedProjects as $project): ?>
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100 border-success">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0 text-truncate">
+                                    <?= htmlspecialchars($project['title']) ?>
+                                </h5>
+                                <span class="badge rounded-pill bg-primary px-3 py-2">
+                                    <i class="bi <?= htmlspecialchars($project['domain_icon'] ?? 'bi-folder') ?>"></i>
+                                    <?= htmlspecialchars($project['domain_name'] ?? 'Domaine inconnu') ?>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <!-- Barre de progression (100%) -->
+                            <?php if ($project['progress']['total_tasks'] > 0): ?>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <small class="text-info fw-medium">Progression</small>
+                                        <small class="text-info fw-medium">
+                                            <?= $project['progress']['completed_tasks'] ?>/<?= $project['progress']['total_tasks'] ?> tâches
+                                        </small>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-info" 
+                                             style="width: 100%"
+                                             title="Projet terminé !">
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
+                            <!-- Message de félicitations -->
+                            <div class="mb-3 text-center">
+                                <i class="bi bi-trophy text-warning" style="font-size: 1.5rem;"></i>
+                                <p class="small mb-0 mt-1 fw-medium">
+                                    Projet terminé avec succès !
+                                </p>
+                            </div>
+                            
+                            <!-- Bouton d'action -->
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-center">
+                                    <a href="show-project.php?id=<?= $project['id'] ?>" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-eye me-1"></i>Voir le projet
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+        
+    <?php else: ?>
         <div class="col-12">
-            <div class="alert alert-warning">
-                <p>Pour consulter vos projets, veuillez vous connecter</p>
-                <a href="login.php" class="btn btn-outline-primary">Login</a>
+            <div class="text-center py-5">
+                <i class="bi bi-folder-x display-1 text-muted"></i>
+                <h4 class="mt-3">Aucun projet trouvé</h4>
+                <p class="text-muted">
+                    <?php if ($domain_id): ?>
+                        Aucun projet dans ce domaine.
+                    <?php else: ?>
+                        Créez votre premier projet pour commencer !
+                    <?php endif; ?>
+                </p>
+                <a href="new-project.php" class="btn btn-primary">
+                    <i class="bi bi-plus-lg me-2"></i>Créer un projet
+                </a>
             </div>
         </div>
-    <?php } ?>
+    <?php endif; ?>
 </div>

@@ -9,11 +9,15 @@
   --bs-nav-link-color: var(--primary);
   --bs-link-color: var(--primary);
   --bs-link-hover-color: var(--secondary);
+  --bs-primary: #649daeff;
   --bs-primary-rgb: 102, 198, 186;
   --bs-danger: #A6A0D8;
+  --bs-danger-rgb: rgb(166, 160, 216);
   --bs-info: #17a2b8;
   --bs-info-rgb: 23, 162, 184;
   --bg-danger: #A6A0D8;
+  --bs-secondary: #66c6baff;
+  --bs-secondary-rgb: 102, 198, 186;
 }
 
 /* BOUTONS PRINCIPAUX */
@@ -90,6 +94,18 @@ button.btn-danger.disabled,
   background-color: #f672d5 !important;
   border-color: #f672d5 !important;
   opacity: 0.65;
+}
+
+.text-primary{
+    color: var(--primary) !important;
+}
+
+h3.text-primary {
+    color: var(--primary) !important;
+}
+
+.dashboard-section-title {
+    color: var(--primary) !important;
 }
 
 /* ICONES */
