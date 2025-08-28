@@ -187,3 +187,5 @@ if (isset($_GET['error'])) {
         </div>
     </div>
 </div>
+
+<script src="assets/js/settings-edit.js"></script>
