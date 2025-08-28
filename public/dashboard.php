@@ -84,8 +84,8 @@ switch ($activeTab) {
             }
             
             // Classer le projet (actif ou terminé)
-            if ($project['status_enum'] === ProjectStatus::Termine && 
-                $project['progress']['percentage'] == 100) {
+            if ($project['status_enum'] === ProjectStatus::Termine || 
+                ($project['progress']['total_tasks'] > 0 && $project['progress']['percentage'] == 100)) {
                 $completedProjects[] = $project;
             } else {
                 $activeProjects[] = $project;

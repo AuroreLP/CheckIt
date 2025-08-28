@@ -15,7 +15,7 @@ if (!isset($_GET['id'])) {
 // Variables pour le template
 $project_id = (int)$_GET['id'];
 $project = getProjectById($pdo, $project_id);
-$domains = getAllDomains($pdo); // Pour le formulaire d'édition
+$domains = getOrCreateDefaultDomain($pdo); // Pour le formulaire d'édition
 $tasks = getProjectTasks($pdo, $project_id);
 $phases = Phase::cases();
 $projectProgress = getProjectProgress($pdo, $project_id);

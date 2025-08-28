@@ -32,21 +32,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "La description ne peut pas dépasser 100 caractères (" . mb_strlen($description) . " caractères saisis).";
     }
     
-    // Vérifier si le nom existe déjà (en excluant le domaine actuel)
-    if (!empty($name) && domainNameExists($pdo, $name, $domainId)) {
-        $errors[] = "Un autre domaine avec ce nom existe déjà.";
-    }
-    
     if (empty($errors)) {
-        $success = updateDomain($pdo, $domainId, $name, $description);
+        // Utiliser directement updateDomain() qui gère déjà la vérification des noms
+        $result = updateDomain($pdo, $domainId, $name, $description);
         
-        if ($success) {
-            $successMessage = "Domaine '{$name}' modifié avec succès !";
-            header('Location: dashboard.php?tab=domaines&success=' . urlencode($successMessage));
+        if ($result['success']) {
+            header('Location: dashboard.php?tab=domaines&success=' . urlencode($result['message']));
             exit();
         } else {
-            $errorMessage = "Erreur lors de la modification du domaine.";
-            header('Location: dashboard.php?tab=domaines&error=' . urlencode($errorMessage));
+            header('Location: dashboard.php?tab=domaines&error=' . urlencode($result['message']));
             exit();
         }
     } else {

@@ -63,19 +63,11 @@
                                 <i class="bi bi-pencil"></i>
                             </button>
                             
-                            <?php if ($projectCount === 0): ?>
-                                <button class="btn btn-sm btn-outline-danger" 
-                                        onclick="confirmDeleteDomain(<?= $domain['id'] ?>, '<?= htmlspecialchars($domain['name']) ?>')"
-                                        title="Supprimer">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            <?php else: ?>
-                                <button class="btn btn-sm btn-outline-secondary" 
-                                        disabled
-                                        title="Impossible de supprimer : <?= $projectCount ?> projet(s) lié(s)">
-                                    <i class="bi bi-lock"></i>
-                                </button>
-                            <?php endif; ?>
+                            <button class="btn btn-sm btn-outline-danger" 
+                                    onclick="confirmDeleteDomain(<?= $domain['id'] ?>, '<?= htmlspecialchars($domain['name']) ?>', <?= $projectCount ?>)"
+                                    title="Supprimer<?= $projectCount > 0 ? ' (projets seront déplacés vers Non classé)' : '' ?>">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -105,7 +97,7 @@
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="add-domain.php" method="post">
+            <form action="new-domain.php" method="post">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="domainName" class="form-label">Nom du domaine *</label>
@@ -219,8 +211,16 @@ function updateCharCount(textareaId, counterId) {
 }
 
 // Fonction pour confirmer la suppression
-function confirmDeleteDomain(domainId, domainName) {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer le domaine "${domainName}" ?\n\nCette action est irréversible.`)) {
+function confirmDeleteDomain(domainId, domainName, projectCount) {
+    let message = `Êtes-vous sûr de vouloir supprimer le domaine "${domainName}" ?`;
+    
+    if (projectCount > 0) {
+        message += `\n\n⚠️ ATTENTION : ${projectCount} projet(s) utilisent ce domaine.\nIls seront automatiquement déplacés vers le domaine "Non classé".`;
+    }
+    
+    message += `\n\nCette action est irréversible.`;
+    
+    if (confirm(message)) {
         window.location.href = `delete-domain.php?id=${domainId}`;
     }
 }
