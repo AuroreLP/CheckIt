@@ -7,7 +7,7 @@
 function getActiveProjectsByUser($pdo, $userId) {
     try {
         $sql = "SELECT DISTINCT p.id, p.title 
-                FROM projects p 
+                FROM project p 
                 LEFT JOIN task t ON p.id = t.project_id 
                 WHERE p.user_id = ? 
                 AND (t.status = 0 OR t.status IS NULL)";
@@ -28,7 +28,7 @@ function getTotalChecks($pdo, $userId) {
     try {
         $sql = "SELECT COUNT(t.id) as total_checks 
                 FROM task t 
-                INNER JOIN projects p ON t.project_id = p.id 
+                INNER JOIN project p ON t.project_id = p.id 
                 WHERE p.user_id = ?";
         
         $stmt = $pdo->prepare($sql);
@@ -48,7 +48,7 @@ function getCompletedTasks($pdo, $userId) {
     try {
         $sql = "SELECT COUNT(t.id) as completed_tasks 
                 FROM task t 
-                INNER JOIN projects p ON t.project_id = p.id 
+                INNER JOIN project p ON t.project_id = p.id 
                 WHERE p.user_id = ? AND t.status = 1";
         
         $stmt = $pdo->prepare($sql);
@@ -68,7 +68,7 @@ function getPendingTasks($pdo, $userId) {
     try {
         $sql = "SELECT COUNT(t.id) as pending_tasks 
                 FROM task t 
-                INNER JOIN projects p ON t.project_id = p.id 
+                INNER JOIN project p ON t.project_id = p.id 
                 WHERE p.user_id = ? AND t.status = 0";
         
         $stmt = $pdo->prepare($sql);
@@ -88,14 +88,13 @@ function getStatisticsByDomain($pdo, $userId) {
     try {
         $sql = "SELECT 
                     d.name as domain_name,
-                    d.icon as domain_icon,
                     COUNT(DISTINCT p.id) as project_count,
                     COUNT(t.id) as total_tasks,
                     SUM(CASE WHEN t.status = 1 THEN 1 ELSE 0 END) as completed_tasks
-                FROM domains d
-                LEFT JOIN projects p ON d.id = p.domain_id AND p.user_id = ?
+                FROM domain d
+                LEFT JOIN project p ON d.id = p.domain_id AND p.user_id = ?
                 LEFT JOIN task t ON p.id = t.project_id
-                GROUP BY d.id, d.name, d.icon
+                GROUP BY d.id, d.name
                 ORDER BY project_count DESC";
         
         $stmt = $pdo->prepare($sql);
@@ -112,9 +111,9 @@ function getStatisticsByDomain($pdo, $userId) {
  */
 function getRecentProjects($pdo, $userId, $days = 7) {
     try {
-        $sql = "SELECT p.*, d.name as domain_name, d.icon as domain_icon
-                FROM projects p
-                LEFT JOIN domains d ON p.domain_id = d.id
+        $sql = "SELECT p.*, d.name as domain_name
+                FROM project p
+                LEFT JOIN domain d ON p.domain_id = d.id
                 WHERE p.user_id = ? 
                 AND p.created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
                 ORDER BY p.created_at DESC
@@ -147,3 +146,4 @@ function getOverallProgress($pdo, $userId) {
         return 0;
     }
 }
+?>

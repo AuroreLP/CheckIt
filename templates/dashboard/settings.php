@@ -50,7 +50,17 @@ if (isset($_GET['error'])) {
                 </h5>
             </div>
             <div class="card-body">
-                <form action="update-profile.php" method="post" id="profileForm">
+                <div class="mb-3">
+                    <small class="text-muted">Membre depuis le</small>
+                    <strong class="ms-1">
+                        <?php if (isset($userProfile['created_at'])): ?>
+                            <?= date('d/m/Y', strtotime($userProfile['created_at'])) ?>
+                        <?php else: ?>
+                            date inconnue
+                        <?php endif; ?>
+                    </strong>
+                </div>
+                <form action="edit-settings.php" method="post" id="profileForm">
                     <div class="mb-3">
                         <label for="username" class="form-label">Nom d'utilisateur</label>
                         <div class="input-group">
@@ -99,13 +109,12 @@ if (isset($_GET['error'])) {
                         </div>
                         <div id="passwordMatch" class="form-text"></div>
                     </div>
-                    
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button type="reset" class="btn btn-outline-secondary me-md-2">
-                            <i class="bi bi-arrow-clockwise me-2"></i>Annuler
-                        </button>
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-lg me-2"></i>Sauvegarder les modifications
+                            Sauvegarder les modifications
+                        </button>
+                        <button type="reset" class="btn btn-outline-primary">
+                            Annuler
                         </button>
                     </div>
                 </form>
@@ -115,49 +124,8 @@ if (isset($_GET['error'])) {
     
     <!-- Informations du compte -->
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="bi bi-info-circle me-2"></i>
-                    Informations du compte
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <small class="text-muted">Membre depuis</small>
-                    <p class="mb-1 fw-bold">
-                        <?php if (isset($userProfile['created_at'])): ?>
-                            <?= date('d/m/Y', strtotime($userProfile['created_at'])) ?>
-                        <?php else: ?>
-                            Date inconnue
-                        <?php endif; ?>
-                    </p>
-                </div>
-                <div class="mb-3">
-                    <small class="text-muted">Projets créés</small>
-                    <p class="mb-1 fw-bold text-primary"><?= $totalProjects ?? 0 ?></p>
-                </div>
-                <div class="mb-3">
-                    <small class="text-muted">Tâches terminées</small>
-                    <p class="mb-1 fw-bold text-success"><?= $completedTasksCount ?? 0 ?></p>
-                </div>
-                <div class="mb-3">
-                    <small class="text-muted">Progression générale</small>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-success" role="progressbar" 
-                             style="width: <?= $overallProgress ?? 0 ?>%" 
-                             aria-valuenow="<?= $overallProgress ?? 0 ?>" 
-                             aria-valuemin="0" 
-                             aria-valuemax="100"></div>
-                    </div>
-                    <small class="text-muted"><?= $overallProgress ?? 0 ?>% complété</small>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Section Danger Zone -->
-        <div class="card border-danger mt-3">
-            <div class="card-header bg-danger text-white">
+        <div class="card border-danger">
+            <div class="card-header bg-danger">
                 <h5 class="mb-0">
                     <i class="bi bi-exclamation-triangle me-2"></i>
                     Zone de danger
@@ -174,7 +142,6 @@ if (isset($_GET['error'])) {
             </div>
         </div>
     </div>
-</div>
 
 <!-- Modal de confirmation de suppression -->
 <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
@@ -204,7 +171,8 @@ if (isset($_GET['error'])) {
                         Pour confirmer, tapez votre nom d'utilisateur : 
                         <strong class="text-danger"><?= htmlspecialchars(getConnectedUserName()); ?></strong>
                     </label>
-                    <input type="text" class="form-control" id="confirmUsername" 
+                    <input type="text" class="form-control" id="confirmUsername"
+                           data-expected-username="<?= htmlspecialchars(getConnectedUserName()); ?>"
                            placeholder="Nom d'utilisateur" autocomplete="off">
                 </div>
             </div>
@@ -219,103 +187,3 @@ if (isset($_GET['error'])) {
         </div>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Toggle password visibility
-    document.getElementById('togglePassword').addEventListener('click', function() {
-        const password = document.getElementById('password');
-        const icon = this.querySelector('i');
-        
-        if (password.type === 'password') {
-            password.type = 'text';
-            icon.classList.replace('bi-eye', 'bi-eye-slash');
-        } else {
-            password.type = 'password';
-            icon.classList.replace('bi-eye-slash', 'bi-eye');
-        }
-    });
-    
-    document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
-        const confirmPassword = document.getElementById('confirm_password');
-        const icon = this.querySelector('i');
-        
-        if (confirmPassword.type === 'password') {
-            confirmPassword.type = 'text';
-            icon.classList.replace('bi-eye', 'bi-eye-slash');
-        } else {
-            confirmPassword.type = 'password';
-            icon.classList.replace('bi-eye-slash', 'bi-eye');
-        }
-    });
-    
-    // Validation des mots de passe en temps réel
-    function validatePasswords() {
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm_password').value;
-        const matchDiv = document.getElementById('passwordMatch');
-        
-        if (password && confirmPassword) {
-            if (password === confirmPassword) {
-                matchDiv.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i>Les mots de passe correspondent</span>';
-                matchDiv.className = 'form-text text-success';
-            } else {
-                matchDiv.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>Les mots de passe ne correspondent pas</span>';
-                matchDiv.className = 'form-text text-danger';
-            }
-        } else {
-            matchDiv.innerHTML = '';
-        }
-    }
-    
-    document.getElementById('password').addEventListener('input', validatePasswords);
-    document.getElementById('confirm_password').addEventListener('input', validatePasswords);
-    
-    // Validation du formulaire
-    document.getElementById('profileForm').addEventListener('submit', function(e) {
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm_password').value;
-        
-        if (password && password !== confirmPassword) {
-            e.preventDefault();
-            alert('Les mots de passe ne correspondent pas.');
-            return false;
-        }
-        
-        if (password && password.length < 6) {
-            e.preventDefault();
-            alert('Le mot de passe doit contenir au moins 6 caractères.');
-            return false;
-        }
-    });
-    
-    // Validation pour la suppression du compte
-    document.getElementById('confirmUsername').addEventListener('input', function() {
-        const expectedUsername = '<?= htmlspecialchars(getConnectedUserName()); ?>';
-        const confirmBtn = document.getElementById('confirmDeleteBtn');
-        
-        if (this.value === expectedUsername) {
-            confirmBtn.disabled = false;
-            confirmBtn.classList.remove('disabled');
-        } else {
-            confirmBtn.disabled = true;
-            confirmBtn.classList.add('disabled');
-        }
-    });
-    
-    // Auto-hide alerts after 5 seconds
-    setTimeout(function() {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(function(alert) {
-            const alertInstance = new bootstrap.Alert(alert);
-            alertInstance.close();
-        });
-    }, 5000);
-});
-
-function deleteAccount() {
-    if (confirm('Êtes-vous absolument sûr ? Cette action ne peut pas être annulée.')) {
-        window.location.href = 'delete-account.php';
-    }
-}
-</script>

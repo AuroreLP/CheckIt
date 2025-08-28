@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../src/session.php';
 require_once __DIR__ . '/../src/pdo.php';
-require_once __DIR__ . '/../src/profile.php';
+require_once __DIR__ . '/../src/settings.php';
 
 // Vérifier si l'utilisateur est connecté
 if (!isUserConnected()) {
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user']['email'] = $email;
             
             $successMessage = 'Profil mis à jour avec succès !';
-            header('Location: dashboard.php?tab=profil&success=' . urlencode($successMessage));
+            header('Location: dashboard.php?tab=settings&success=' . urlencode($successMessage));
             exit();
         } else {
             $errors[] = 'Erreur lors de la mise à jour du profil.';
@@ -39,28 +39,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // En cas d'erreurs, rediriger avec les erreurs
     if (!empty($errors)) {
         $errorString = implode('|', $errors);
-        header('Location: dashboard.php?tab=profil&errors=' . urlencode($errorString));
+        header('Location: dashboard.php?tab=settings&errors=' . urlencode($errorString));
         exit();
     }
 }
 
 // Si accès direct au fichier, rediriger vers le dashboard
-header('Location: dashboard.php?tab=profil');
-exit();
-?>&errors=' . urlencode($errorString));
-        exit();
-    }
-}
-
-// Si accès direct au fichier, rediriger vers le dashboard
-header('Location: dashboard.php?tab=profil');
-exit();
-?>&errors=' . urlencode($errorString));
-        exit();
-    }
-}
-
-// Si accès direct au fichier, rediriger vers le dashboard
-header('Location: dashboard.php?tab=profil');
+header('Location: dashboard.php?tab=settings');
 exit();
 ?>

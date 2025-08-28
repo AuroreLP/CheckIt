@@ -14,7 +14,7 @@
             <a class="nav-link <?= $activeTab == 'domaines' ? 'active' : '' ?>" href="dashboard.php?tab=domaines">
                 <i class="bi bi-globe me-2"></i>Domaines
             </a>
-            <a class="nav-link <?= $activeTab == 'profil' ? 'active' : '' ?>" href="dashboard.php?tab=profil">
+            <a class="nav-link <?= $activeTab == 'settings' ? 'active' : '' ?>" href="dashboard.php?tab=settings">
                 <i class="bi bi-gear me-2"></i>Paramètres
             </a>
             <a class="nav-link <?= $activeTab == 'statistiques' ? 'active' : '' ?>" href="dashboard.php?tab=statistiques">

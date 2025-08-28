@@ -14,7 +14,7 @@ require_once __DIR__ . '/../src/project.php';
 require_once __DIR__ . '/../src/domain.php';
 require_once __DIR__ . '/../src/task.php';
 require_once __DIR__ . '/../src/statistics.php';
-require_once __DIR__ . '/../src/profile.php';
+require_once __DIR__ . '/../src/settings.php';
 
 // Variables globales pour les templates
 $userId = $_SESSION['user']['id'];
@@ -111,7 +111,7 @@ switch ($activeTab) {
         $recentProjects = getRecentProjects($pdo, $userId);
         break;
         
-    case 'profil':
+    case 'settings':
         // Récupérer les données du profil utilisateur
         $userProfile = getUserProfile($pdo, $userId);
         // Récupérer aussi les statistiques pour l'affichage
@@ -145,8 +145,8 @@ require_once __DIR__ . '/../templates/header.php';
                     case 'domaines':
                         require_once __DIR__ . '/../templates/dashboard/domaines.php';
                         break;
-                    case 'profil':
-                        require_once __DIR__ . '/../templates/dashboard/profil.php';
+                    case 'settings':
+                        require_once __DIR__ . '/../templates/dashboard/settings.php';
                         break;
                     case 'statistiques':
                         require_once __DIR__ . '/../templates/dashboard/statistiques.php';
