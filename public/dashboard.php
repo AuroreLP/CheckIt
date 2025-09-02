@@ -42,6 +42,7 @@ switch ($activeTab) {
         $completedProjects = [];
         
         foreach ($allProjects as $project) {
+
             // Calculer la progression
             $project['progress'] = getProjectProgress($pdo, $project['id']);
             
@@ -64,7 +65,7 @@ switch ($activeTab) {
             $project['next_tasks'] = array_slice($pendingTasks, 0, 2);
             
             // Calculer les alertes de dates pour les tâches
-            foreach ($project['next_tasks'] as &$task) {
+            foreach ($project['next_tasks'] as $taskIndex => $task) {
                 $today = new DateTime();
                 $today->setTime(0, 0, 0);
                 $deadline = new DateTime($task['deadline']);
@@ -72,6 +73,9 @@ switch ($activeTab) {
                 
                 $task['is_overdue'] = $deadline < $today;
                 $task['is_due_soon'] = !$task['is_overdue'] && $deadline <= (clone $today)->modify('+3 days');
+
+                // Réassigner dans le tableau
+                $project['next_tasks'][$taskIndex] = $task;
             }
             
             // Calculer les alertes de dates pour le projet
