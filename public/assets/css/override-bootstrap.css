@@ -330,10 +330,13 @@ form i {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+.complete-task-btn {
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
 .complete-task-btn:hover {
-    background-color: #198754;
-    color: white;
-    border-color: #198754;
+    color: #198754 !important;
+    transform: scale(1.1);
 }
 
 .task-item .badge {
@@ -347,12 +350,6 @@ form i {
 .card.task-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.complete-task-btn:hover {
-    background-color: #198754;
-    color: white;
-    border-color: #198754;
 }
 
 /* PAGE PROJECT - SECTION MODIFICATION DES INFORMATIONS DU PROJET */

@@ -16,9 +16,10 @@
             <div class="card border-danger task-item h-100" data-task-id="<?= $task['id'] ?>">
                 <div class="card-body d-flex flex-column">
                     <div class="d-flex align-items-start mb-2">
-                        <button class="btn btn-outline-success btn-sm me-3 complete-task-btn" data-task-id="<?= $task['id'] ?>">
-                            <i class="bi bi-check"></i>
-                        </button>
+                        <i class="bi bi-check-circle text-muted me-3 complete-task-btn" 
+                           data-task-id="<?= $task['id'] ?>" 
+                           style="font-size: 1.2rem; cursor: pointer;"
+                           title="Marquer comme terminé"></i>
                         <div class="flex-grow-1">
                             <h6 class="card-title mb-2"><?= htmlspecialchars($task['name'] ?? $task['title'] ?? 'Tâche sans nom') ?></h6>
                         </div>
@@ -64,6 +65,7 @@
 <?php endif; ?>
 
 <div class="row">
+    <!-- Aujourd'hui -->
     <div class="col-12 col-lg-4 mb-4">
         <div class="card h-100">
             <div class="card-header">
@@ -78,9 +80,10 @@
                     <?php foreach ($todayTasks as $task): ?>
                     <div class="list-group-item task-item" data-task-id="<?= $task['id'] ?>">
                         <div class="d-flex align-items-start">
-                            <button class="btn btn-outline-success btn-sm me-2 complete-task-btn" data-task-id="<?= $task['id'] ?>">
-                                <i class="bi bi-check"></i>
-                            </button>
+                            <i class="bi bi-check-circle text-muted me-2 complete-task-btn" 
+                               data-task-id="<?= $task['id'] ?>" 
+                               style="font-size: 1.2rem; cursor: pointer;"
+                               title="Marquer comme terminé"></i>
                             <div class="flex-grow-1">
                                 <h6 class="mb-1 small"><?= htmlspecialchars($task['name'] ?? $task['title'] ?? 'Tâche sans nom') ?></h6>
                                 <span class="badge bg-secondary rounded-pill mb-1" style="font-size: 0.65rem;">
@@ -127,9 +130,10 @@
                     <?php foreach ($tomorrowTasks as $task): ?>
                     <div class="list-group-item task-item" data-task-id="<?= $task['id'] ?>">
                         <div class="d-flex align-items-start">
-                            <button class="btn btn-outline-success btn-sm me-2 complete-task-btn" data-task-id="<?= $task['id'] ?>">
-                                <i class="bi bi-check"></i>
-                            </button>
+                            <i class="bi bi-check-circle text-muted me-2 complete-task-btn" 
+                               data-task-id="<?= $task['id'] ?>" 
+                               style="font-size: 1.2rem; cursor: pointer;"
+                               title="Marquer comme terminé"></i>
                             <div class="flex-grow-1">
                                 <h6 class="mb-1 small"><?= htmlspecialchars($task['name'] ?? $task['title'] ?? 'Tâche sans nom') ?></h6>
                                 <span class="badge bg-secondary rounded-pill mb-1" style="font-size: 0.65rem;">
@@ -176,9 +180,10 @@
                     <?php foreach ($next3DaysTasks as $task): ?>
                     <div class="list-group-item task-item" data-task-id="<?= $task['id'] ?>">
                         <div class="d-flex align-items-start">
-                            <button class="btn btn-outline-success btn-sm me-2 complete-task-btn" data-task-id="<?= $task['id'] ?>">
-                                <i class="bi bi-check"></i>
-                            </button>
+                            <i class="bi bi-check-circle text-muted me-2 complete-task-btn" 
+                               data-task-id="<?= $task['id'] ?>" 
+                               style="font-size: 1.2rem; cursor: pointer;"
+                               title="Marquer comme terminé"></i>
                             <div class="flex-grow-1">
                                 <h6 class="mb-1 small"><?= htmlspecialchars($task['name'] ?? $task['title'] ?? 'Tâche sans nom') ?></h6>
                                 <span class="badge bg-secondary rounded-pill mb-1" style="font-size: 0.65rem;">

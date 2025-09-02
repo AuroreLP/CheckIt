@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const taskId = this.dataset.taskId;
             const taskItem = this.closest('.task-item');
             
-            // Désactiver le bouton pendant le traitement
-            this.disabled = true;
-            this.innerHTML = '<i class="bi bi-arrow-repeat spin"></i>';
+            // Changer l'icône pendant le traitement
+            this.style.pointerEvents = 'none';
+            this.className = 'bi bi-arrow-repeat text-muted me-3 spin complete-task-btn';
             
             // Envoyer la requête AJAX
             fetch('complete-task.php', {
@@ -32,15 +32,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     }, 300);
                 } else {
                     // Restaurer le bouton en cas d'erreur
-                    this.disabled = false;
-                    this.innerHTML = '<i class="bi bi-check"></i>';
+                    this.style.pointerEvents = 'auto';
+                    this.className = 'bi bi-check-circle text-muted me-3 complete-task-btn';
                     alert('Erreur lors de la completion de la tâche');
                 }
             })
             .catch(error => {
                 console.error('Erreur:', error);
-                this.disabled = false;
-                this.innerHTML = '<i class="bi bi-check"></i>';
+                this.style.pointerEvents = 'auto';
+                this.className = 'bi bi-check-circle text-muted me-3 complete-task-btn';
                 alert('Erreur de connexion');
             });
         });
@@ -54,6 +54,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (header.textContent.includes('Aujourd\'hui')) {
                 header.innerHTML = '<i class="bi bi-calendar-day me-2"></i>Aujourd\'hui (' + taskCount + ')';
+            } else if (header.textContent.includes('Demain')) {
+                header.innerHTML = '<i class="bi bi-calendar-plus me-2"></i>Demain (' + taskCount + ')';
+            } else if (header.textContent.includes('Prochainement')) {
+                header.innerHTML = '<i class="bi bi-calendar-range me-2"></i>Prochainement (' + taskCount + ')';
             } else if (header.textContent.includes('en retard')) {
                 header.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Tâches en retard (' + taskCount + ')';
             }
