@@ -2,13 +2,6 @@
   require_once 'pdo.php';
   require_once 'project.php';
 
-  // Définition de l'énumération pour les phases
-enum Phase: string {
-  case Analyse = 'analyse';
-  case Conception = 'conception';
-  case Programmation = 'programmation';
-  case Deploiement = 'deploiement';
-}
 
   // Fonction pour récupérer les tâches d'un projet
   function getProjectTasks(PDO $pdo, int $id): array
@@ -28,11 +21,10 @@ enum Phase: string {
   }
 
   // Fonction pour ajouter une nouvelle tâche
-  function addTask($pdo, $name, $phase, $deadline, $description, $project_id, $status = false) {
-    $stmt = $pdo->prepare("INSERT INTO task (name, phase, deadline, description, project_id, status) VALUES (:name, :phase, :deadline, :description, :project_id, :status)");
+  function addTask($pdo, $name, $deadline, $description, $project_id, $status = false) {
+    $stmt = $pdo->prepare("INSERT INTO task (name, deadline, description, project_id, status) VALUES (:name, :deadline, :description, :project_id, :status)");
     $stmt->execute([
         'name' => $name,
-        'phase' => $phase,
         'deadline' => $deadline,
         'description' => $description,
         'project_id' => $project_id,
@@ -41,12 +33,11 @@ enum Phase: string {
   }
 
 // Fonction pour modifier une tâche existante
-function editTask($pdo, $id, $name, $phase, $deadline, $description) {
-  $stmt = $pdo->prepare("UPDATE task SET name = :name, phase = :phase, deadline = :deadline, description = :description WHERE id = :id");
+function editTask($pdo, $id, $name, $deadline, $description) {
+  $stmt = $pdo->prepare("UPDATE task SET name = :name, deadline = :deadline, description = :description WHERE id = :id");
   $stmt->execute([
       'id' => $id,
       'name' => $name,
-      'phase' => $phase,
       'deadline' => $deadline,
       'description' => $description,
   ]);

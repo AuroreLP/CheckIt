@@ -226,6 +226,22 @@ form i {
   color: var(--primary);
 }
 
+/* CHANGEMENT DE COULEURS DU SELECT */
+.form-select:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 0.25rem rgba(100, 157, 174, 0.25) !important;
+}
+
+.form-select:hover {
+    border-color: var(--secondary) !important;
+}
+
+/* Option sélectionnée */
+.form-select option:checked {
+    background-color: var(--primary) !important;
+    color: white !important;
+}
+
 /* PAGE PROJET - SECTION INFORMATIONS DU PROJET */
 .project-info-left {
     border-right: none;

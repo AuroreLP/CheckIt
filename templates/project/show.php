@@ -152,7 +152,7 @@
                     <label class="form-label">Nom de la tâche</label>
                     <input type="text" name="name" class="form-control" required>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-5">
                     <label class="form-label">
                         Description 
                         <span class="form-text d-inline ms-2">
@@ -161,17 +161,6 @@
                     </label>
                     <input type="text" name="description" class="form-control" maxlength="200" 
                            id="taskDescriptionAdd" onkeyup="updateCharCount('taskDescriptionAdd', 'charCountAdd')">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Phase</label>
-                    <select name="phase" class="form-select" required>
-                        <option value="">Choisir...</option>
-                        <?php foreach ($phases as $case): ?>
-                            <option value="<?= $case->value ?>">
-                                <?= ucfirst($case->name) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Date limite</label>
@@ -255,9 +244,6 @@
                                                         <i class="bi bi-check ms-1"></i>
                                                     <?php endif; ?>
                                                 </span>
-                                                <span class="badge bg-primary">
-                                                    <?= ucfirst($task['phase']) ?>
-                                                </span>
                                             </div>
                                         </div>
                                         
@@ -274,12 +260,6 @@
                                                     <?php elseif ($task['status']): ?>
                                                         <i class="bi bi-check ms-1"></i>
                                                     <?php endif; ?>
-                                                </span>
-                                            </div>
-                                            <div class="mb-2">
-                                                <span class="badge bg-info">
-                                                    <i class="bi bi-gear me-1"></i>
-                                                    <?= ucfirst($task['phase']) ?>
                                                 </span>
                                             </div>
                                             <div class="small text-muted fst-italic">
@@ -301,17 +281,6 @@
                                                 <label class="form-label">Nom de la tâche</label>
                                                 <input type="text" name="name" class="form-control" 
                                                     value="<?= htmlspecialchars($task['name']) ?>" required>
-                                            </div>
-                                            <div class="col-md-4 mb-3">
-                                                <label class="form-label">Phase</label>
-                                                <select name="phase" class="form-select">
-                                                    <?php foreach ($phases as $case): ?>
-                                                        <option value="<?= $case->value ?>" 
-                                                                <?= $task['phase'] === $case->value ? 'selected' : '' ?>>
-                                                            <?= ucfirst($case->value) ?>
-                                                        </option>
-                                                    <?php endforeach; ?>
-                                                </select>
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <label class="form-label">Date limite</label>

@@ -14,17 +14,15 @@ $projectId = (int)$_GET['project_id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
-    $phase = $_POST['phase'] ?? null;
     $deadline = $_POST['deadline'] ?? '';
     $description = trim($_POST['description'] ?? '');
 
     // Validation simple
     if (empty($name)) $errors[] = "Le nom est requis.";
-    if (!in_array($phase, array_column(Phase::cases(), 'value'))) $errors[] = "Phase invalide.";
     if (empty($deadline)) $errors[] = "La date limite est requise.";
 
     if (empty($errors)) {
-        addTask($pdo, $name, $phase, $deadline, $description, $projectId);
+        addTask($pdo, $name, $deadline, $description, $projectId);
         $success = true;
     }
 }

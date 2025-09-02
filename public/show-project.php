@@ -17,7 +17,6 @@ $project_id = (int)$_GET['id'];
 $project = getProjectById($pdo, $project_id);
 $domains = getOrCreateDefaultDomain($pdo); // Pour le formulaire d'édition
 $tasks = getProjectTasks($pdo, $project_id);
-$phases = Phase::cases();
 $projectProgress = getProjectProgress($pdo, $project_id);
 $projectStatuses = ProjectStatus::cases();
 $errors = [];
@@ -34,12 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Ajout de tâche
     if (isset($_POST['saveTask'])) {
         $name = trim($_POST['name'] ?? '');
-        $phase = $_POST['phase'] ?? '';
         $deadline = $_POST['deadline'] ?? '';
         $description = trim($_POST['description'] ?? '');
 
         if (empty($name)) $errors[] = "Le nom est requis.";
-        if (!in_array($phase, array_column(Phase::cases(), 'value'))) $errors[] = "Phase invalide.";
         if (empty($deadline)) $errors[] = "La date limite est requise.";
         
         // Validation de la longueur de la description
@@ -48,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (empty($errors)) {
-            addTask($pdo, $name, $phase, $deadline, $description, $project_id, 0);
+            addTask($pdo, $name, $deadline, $description, $project_id, 0);
             $success = 'Tâche ajoutée avec succès !';
             $tasks = getProjectTasks($pdo, $project_id);
             $projectProgress = getProjectProgress($pdo, $project_id); // Rafraîchir progression
@@ -59,12 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['editTask'])) {
         $taskId = (int)$_POST['task_id'];
         $name = trim($_POST['name'] ?? '');
-        $phase = $_POST['phase'] ?? '';
         $deadline = $_POST['deadline'] ?? '';
         $description = trim($_POST['description'] ?? '');
 
         if (empty($name)) $errors[] = "Le nom est requis.";
-        if (!in_array($phase, array_column(Phase::cases(), 'value'))) $errors[] = "Phase invalide.";
         if (empty($deadline)) $errors[] = "La date limite est requise.";
         
         // Validation de la longueur de la description
@@ -73,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (empty($errors)) {
-            editTask($pdo, $taskId, $name, $phase, $deadline, $description);
+            editTask($pdo, $taskId, $name, $deadline, $description);
             $success = 'Tâche modifiée avec succès !';
             $tasks = getProjectTasks($pdo, $project_id);
             $projectProgress = getProjectProgress($pdo, $project_id); // Rafraîchir progression
