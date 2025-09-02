@@ -2,8 +2,8 @@
   require_once __DIR__. "/../templates/header.php"
 ?>
 
-    <div class="container col-xxl-8 px-4 py-5">
-      <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+    <div class="container col-xxl-8">
+      <div class="row flex-lg-row-reverse align-items-center g-5 py-2">
         <div class="col-10 col-sm-8 col-lg-6">
           <img src="assets/images/Logo-Checkit.png" alt="logo checkit" width="400" loading="lazy">
         </div>
@@ -15,37 +15,37 @@
     </div>
     
     <div class="container col-xxl-8 px-4 py-5">
-      <div class="row text-center">
+      <div class="text-center">
         <h2>Découvrez les fonctionnalités principales</h2>
-        <div class="col-md-4 my-2">
-          <div class="card w-100 text-center">
-            <div class="card-header">
-              <i class="bi bi-card-checklist"></i>
-            </div>
-            <div class="card-body">
-              <h3 class="card-title">Créez vos listes de projets</h3>
-            </div>
-          </div>
-        </div>
-    
-        <div class="col-md-4 my-2">
-          <div class="card w-100 text-center">
-            <div class="card-header">
-              <i class="bi bi-tags-fill"></i>
-            </div>
-            <div class="card-body">
-              <h3 class="card-title">Classez les projets par domaines</h3>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+          <div class="col">
+            <div class="card h-100 text-center">
+              <div class="card-header">
+                <i class="bi bi-card-checklist"></i>
+              </div>
+              <div class="card-body d-flex align-items-center">
+                <h3 class="card-title">Créez vos listes de projets</h3>
+              </div>
             </div>
           </div>
-        </div>
-      
-        <div class="col-md-4 my-2">
-          <div class="card w-100 text-center">
-            <div class="card-header">
-              <i class="bi bi-search"></i>
+          <div class="col">
+            <div class="card h-100 text-center">
+              <div class="card-header">
+                <i class="bi bi-tags-fill"></i>
+              </div>
+              <div class="card-body d-flex align-items-center">
+                <h3 class="card-title">Classez les projets par domaine</h3>
+              </div>
             </div>
-            <div class="card-body">
-              <h3 class="card-title">Retrouvez facilement vos projets</h3>
+          </div>
+          <div class="col">
+            <div class="card h-100 text-center">
+              <div class="card-header">
+                <i class="bi bi-search"></i>
+              </div>
+              <div class="card-body d-flex align-items-center">
+                <h3 class="card-title">Retrouvez vos tâches par projet</h3>
+              </div>
             </div>
           </div>
         </div>

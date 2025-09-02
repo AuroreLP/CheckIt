@@ -96,6 +96,10 @@ button.btn-danger.disabled,
   opacity: 0.65;
 }
 
+.text-danger {
+    color: #8b63a5 !important;
+}
+
 .text-primary{
     color: var(--primary) !important;
 }
