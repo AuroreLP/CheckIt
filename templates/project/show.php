@@ -244,9 +244,16 @@
                                             
                                             <!-- Desktop seulement : badges à droite -->
                                             <div class="d-none d-md-flex gap-2 ms-3 me-3">
-                                                <span class="badge <?= $isOverdue ? 'bg-danger' : ($isDueSoon ? 'bg-warning text-dark' : 'bg-secondary') ?>">
+                                                <span class="badge <?= $isOverdue ? 'bg-danger' : ($isDueSoon ? 'bg-warning text-dark' : ($task['status'] ? 'bg-success' : 'bg-secondary')) ?>">
                                                     <i class="bi bi-calendar me-1"></i>
                                                     <?= date('d/m', strtotime($task['deadline'])) ?>
+                                                    <?php if ($isOverdue && !$task['status']): ?>
+                                                        <i class="bi bi-exclamation-triangle ms-1"></i>
+                                                    <?php elseif ($isDueSoon && !$task['status']): ?>
+                                                        <i class="bi bi-clock ms-1"></i>
+                                                    <?php elseif ($task['status']): ?>
+                                                        <i class="bi bi-check ms-1"></i>
+                                                    <?php endif; ?>
                                                 </span>
                                                 <span class="badge bg-primary">
                                                     <?= ucfirst($task['phase']) ?>
@@ -257,13 +264,15 @@
                                         <!-- Mobile seulement : infos empilées -->
                                         <div class="d-md-none ms-5 pt-2">
                                             <div class="mb-2">
-                                                <span class="badge <?= $isOverdue ? 'bg-danger' : ($isDueSoon ? 'bg-warning text-dark' : 'bg-secondary') ?>">
+                                                <span class="badge <?= $isOverdue ? 'bg-danger' : ($isDueSoon ? 'bg-warning text-dark' : ($task['status'] ? 'bg-success' : 'bg-secondary')) ?>">
                                                     <i class="bi bi-calendar me-1"></i>
                                                     <?= date('d/m/Y', strtotime($task['deadline'])) ?>
-                                                    <?php if ($isOverdue): ?>
+                                                    <?php if ($isOverdue && !$task['status']): ?>
                                                         <i class="bi bi-exclamation-triangle ms-1"></i>
-                                                    <?php elseif ($isDueSoon): ?>
+                                                    <?php elseif ($isDueSoon && !$task['status']): ?>
                                                         <i class="bi bi-clock ms-1"></i>
+                                                    <?php elseif ($task['status']): ?>
+                                                        <i class="bi bi-check ms-1"></i>
                                                     <?php endif; ?>
                                                 </span>
                                             </div>

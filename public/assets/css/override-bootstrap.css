@@ -183,27 +183,6 @@ h1 .bi, h2 .bi, h3 .bi, h4 .bi, h5 .bi {
   margin: 0.2rem 0 !important;
 }
 
-/* BOUTON TROIS POINTS ULTRA-COMPACT */
-.card .btn-outline-secondary {
-  padding: 0.15rem 0.2rem !important;
-  font-size: 0.7rem !important;
-  line-height: 1;
-  border: 2px solid #6c757d;
-  color: #6c757d;
-  min-width: 22px; /* Largeur minimale fixe */
-  height: 20px; /* Hauteur fixe */
-}
-
-.card .btn-outline-secondary:hover {
-  background-color: #6c757d !important;
-  color: #f8f9fa !important;
-}
-
-/* ICÔNE TROIS POINTS RÉDUITE */
-.card .btn-outline-secondary .bi-three-dots {
-  font-size: 0.6rem !important;
-}
-
 
 /* TYPOGRAPHIE */
 h1, h2, h3 {
@@ -479,4 +458,58 @@ form i {
 /* Bordure normale (par défaut) */
 .accordion-item {
     border-color: #dee2e6 !important;
+}
+
+/* CORRECTION AFFICHAGE BADGES DANS LES TÂCHES */
+
+/* Forcer l'affichage des badges dans les accordion-button */
+.accordion-button .badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    font-size: 0.75rem !important;
+    padding: 0.35rem 0.65rem !important;
+    margin-left: 0.25rem !important;
+}
+
+/* S'assurer que les badges sont visibles dans les conteneurs flex */
+.accordion-button .d-flex .badge,
+.accordion-button .d-md-flex .badge {
+    display: inline-flex !important;
+    flex-shrink: 0 !important;
+}
+
+/* Couleurs spécifiques pour les badges de date selon l'état */
+.badge.bg-danger {
+    background-color: #A6A0D8 !important;
+    color: white !important;
+}
+
+.badge.bg-warning {
+    background-color: #ffdc74e0 !important;
+    color: #212529 !important;
+}
+
+.badge.bg-success {
+    background-color: #17a2b8 !important;
+    color: white !important;
+}
+
+.badge.bg-secondary {
+    background-color: #6c757d !important;
+    color: white !important;
+}
+
+.badge.bg-primary {
+    background-color: var(--primary) !important;
+    color: white !important;
+}
+
+/* Responsive pour mobile */
+@media (max-width: 767.98px) {
+    .accordion-button .badge {
+        font-size: 0.7rem !important;
+        padding: 0.25rem 0.5rem !important;
+    }
 }
