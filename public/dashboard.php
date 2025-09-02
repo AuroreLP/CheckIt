@@ -19,10 +19,20 @@ require_once __DIR__ . '/../src/settings.php';
 // Variables globales pour les templates
 $userId = $_SESSION['user']['id'];
 $domain_id = isset($_GET['domain']) ? (int)$_GET['domain'] : null;
-$activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'projets';
+$activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'today';
 
 // Récupérer les données selon l'onglet actif
 switch ($activeTab) {
+    case 'today':
+    $domains = getAllDomains($pdo);
+    $overdueTasks = getOverdueTasks($pdo, $userId);
+    $todayTasks = getTasksDueToday($pdo, $userId);
+    $tomorrowTasks = getTasksDueTomorrow($pdo, $userId);
+    $next3DaysTasks = getTasksNext3Days($pdo, $userId);
+    $upcomingProjects = getProjectsWithUpcomingDeadlines($pdo, $userId, 7);
+    $recentActivity = getRecentCompletedTasks($pdo, $userId, 5);
+    break;
+
     case 'projets':
         $domains = getAllDomains($pdo);
         $allProjects = getProjectsByUserAndDomain($pdo, $userId, $domain_id);
@@ -37,6 +47,8 @@ switch ($activeTab) {
             
             // Récupérer le statut
             $project['status_enum'] = ProjectStatus::tryFrom($project['status'] ?? 'planification');
+
+            $totalProjects = count($allProjects);
             
             // Récupérer et préparer les prochaines tâches
             $allTasks = getProjectTasks($pdo, $project['id']);
@@ -98,26 +110,13 @@ switch ($activeTab) {
         // Ajouter ici la logique pour récupérer les statistiques des domaines
         break;
         
-    case 'statistiques':
-        // Calculer les statistiques
-        $totalProjects = count(getProjectsByUserAndDomain($pdo, $userId, null));
-        $activeProjects = getActiveProjectsByUser($pdo, $userId);
-        $totalDomains = count(getAllDomains($pdo));
-        $totalChecks = getTotalChecks($pdo, $userId);
-        $completedTasksCount = getCompletedTasks($pdo, $userId);
-        $pendingTasksCount = getPendingTasks($pdo, $userId);
-        $overallProgress = getOverallProgress($pdo, $userId);
-        $domainStats = getStatisticsByDomain($pdo, $userId);
-        $recentProjects = getRecentProjects($pdo, $userId);
-        break;
-        
     case 'settings':
         // Récupérer les données du profil utilisateur
         $userProfile = getUserProfile($pdo, $userId);
         // Récupérer aussi les statistiques pour l'affichage
         $totalProjects = count(getProjectsByUserAndDomain($pdo, $userId, null));
         $completedTasksCount = getCompletedTasks($pdo, $userId);
-        $totalChecks = getTotalChecks($pdo, $userId);
+        $totalChecks = getTotalTasks($pdo, $userId);
         $overallProgress = getOverallProgress($pdo, $userId);
         break;
 }
@@ -139,6 +138,9 @@ require_once __DIR__ . '/../templates/header.php';
                 <?php
                 // Inclure le template correspondant à l'onglet actif
                 switch ($activeTab) {
+                    case 'today':  // <- Cette ligne doit aussi exister
+                        require_once __DIR__ . '/../templates/dashboard/today.php';
+                        break;
                     case 'projets':
                         require_once __DIR__ . '/../templates/dashboard/projets.php';
                         break;
@@ -147,9 +149,6 @@ require_once __DIR__ . '/../templates/header.php';
                         break;
                     case 'settings':
                         require_once __DIR__ . '/../templates/dashboard/settings.php';
-                        break;
-                    case 'statistiques':
-                        require_once __DIR__ . '/../templates/dashboard/statistiques.php';
                         break;
                     default:
                         require_once __DIR__ . '/../templates/dashboard/projets.php';

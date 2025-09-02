@@ -308,6 +308,53 @@ form i {
     }
 }
 
+/* PAGE TODAY - SECTION CARTE DES TÂCHES */
+.today-row .col-12 {
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .today-row .col-md-6 {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+    }
+}
+
+.task-item.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.task-item.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.complete-task-btn:hover {
+    background-color: #198754;
+    color: white;
+    border-color: #198754;
+}
+
+.task-item .badge {
+    font-size: 0.75em;
+}
+
+.card.task-item {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card.task-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.complete-task-btn:hover {
+    background-color: #198754;
+    color: white;
+    border-color: #198754;
+}
+
 /* PAGE PROJECT - SECTION MODIFICATION DES INFORMATIONS DU PROJET */
 /* Textarea des besoins - adaptatif */
 .needs-textarea {

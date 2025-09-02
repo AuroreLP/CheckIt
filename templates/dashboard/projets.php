@@ -1,4 +1,54 @@
-<!-- templates/dashboard/projets.php - Template HTML pur -->
+<h2>Aperçu des projets</h2>
+<div class="row mb-4">
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <h3 class="text-primary"><?= $totalProjects ?? 0 ?></h3>
+                <p class="mb-0">projets au total</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <?php 
+                $completedProjectsCount = count($completedProjects ?? []);
+                $completionRate = $totalProjects > 0 ? round(($completedProjectsCount / $totalProjects) * 100, 1) : 0;
+                ?>
+                <h3 class="text-success"><?= $completionRate ?>%</h3>
+                <p class="mb-0">de projets terminés</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <?php 
+                $totalTasks = getTotalTasks($pdo, $userId);
+                $completedTasks = getCompletedTasks($pdo, $userId);
+                $taskCompletionRate = $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100, 1) : 0;
+                ?>
+                <h3 class="text-info"><?= $taskCompletionRate ?>%</h3>
+                <p class="mb-0">de tâches complétées</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <?php 
+                $overdueTasksCount = count(getOverdueTasks($pdo, $userId));
+                $colorClass = $overdueTasksCount > 0 ? 'text-danger' : 'text-success';
+                ?>
+                <h3 class="<?= $colorClass ?>"><?= $overdueTasksCount ?></h3>
+                <p class="mb-0">tâches en retard</p>
+                <?php if ($overdueTasksCount == 0): ?>
+                    <small class="text-success">Tout à jour</small>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
     <!-- Messages d'alerte -->

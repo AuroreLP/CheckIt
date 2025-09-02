@@ -24,7 +24,7 @@ function getActiveProjectsByUser($pdo, $userId) {
 /**
  * Récupère le nombre total de vérifications/tâches pour un utilisateur
  */
-function getTotalChecks($pdo, $userId) {
+function getTotalTasks($pdo, $userId) {
     try {
         $sql = "SELECT COUNT(t.id) as total_checks 
                 FROM task t 
@@ -107,6 +107,98 @@ function getStatisticsByDomain($pdo, $userId) {
 }
 
 /**
+ * Récupère les tâches dues aujourd'hui
+ */
+function getTasksDueToday($pdo, $userId) {
+    try {
+        $sql = "SELECT t.*, p.title as project_title, p.id as project_id, d.name as domain_name
+                FROM task t 
+                INNER JOIN project p ON t.project_id = p.id 
+                LEFT JOIN domain d ON p.domain_id = d.id
+                WHERE p.user_id = ? 
+                AND t.status = 0 
+                AND DATE(t.deadline) = CURDATE()
+                ORDER BY t.deadline ASC";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur dans getTasksDueToday: " . $e->getMessage());
+        return [];
+    }
+}
+/**
+ * Récupère les tâches en retard
+ */
+function getOverdueTasks($pdo, $userId) {
+    try {
+        $sql = "SELECT t.*, p.title as project_title, p.id as project_id, d.name as domain_name,
+                DATEDIFF(CURDATE(), DATE(t.deadline)) as days_overdue
+                FROM task t 
+                INNER JOIN project p ON t.project_id = p.id 
+                LEFT JOIN domain d ON p.domain_id = d.id
+                WHERE p.user_id = ? 
+                AND t.status = 0 
+                AND DATE(t.deadline) < CURDATE()
+                ORDER BY t.deadline ASC";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur dans getOverdueTasks: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Récupère les tâches dues demain
+ */
+function getTasksDueTomorrow($pdo, $userId) {
+    try {
+        $sql = "SELECT t.*, p.title as project_title, p.id as project_id, d.name as domain_name
+                FROM task t 
+                INNER JOIN project p ON t.project_id = p.id 
+                LEFT JOIN domain d ON p.domain_id = d.id
+                WHERE p.user_id = ? 
+                AND t.status = 0 
+                AND DATE(t.deadline) = CURDATE() + INTERVAL 1 DAY
+                ORDER BY t.deadline ASC";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur dans getTasksDueTomorrow: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Récupère les tâches des 3 jours suivants (après demain)
+ */
+function getTasksNext3Days($pdo, $userId) {
+    try {
+        $sql = "SELECT t.*, p.title as project_title, p.id as project_id, d.name as domain_name
+                FROM task t 
+                INNER JOIN project p ON t.project_id = p.id 
+                LEFT JOIN domain d ON p.domain_id = d.id
+                WHERE p.user_id = ? 
+                AND t.status = 0 
+                AND DATE(t.deadline) BETWEEN CURDATE() + INTERVAL 2 DAY AND CURDATE() + INTERVAL 4 DAY
+                ORDER BY t.deadline ASC";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur dans getTasksNext3Days: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
  * Récupère les projets récemment créés (derniers 7 jours)
  */
 function getRecentProjects($pdo, $userId, $days = 7) {
@@ -129,11 +221,59 @@ function getRecentProjects($pdo, $userId, $days = 7) {
 }
 
 /**
+ * Récupère les projets avec échéances proches
+ */
+function getProjectsWithUpcomingDeadlines($pdo, $userId, $days = 7) {
+    try {
+        $sql = "SELECT p.*, d.name as domain_name,
+                DATEDIFF(DATE(p.end_date), CURDATE()) as days_until_deadline
+                FROM project p 
+                LEFT JOIN domain d ON p.domain_id = d.id
+                WHERE p.user_id = ? 
+                AND p.end_date IS NOT NULL
+                AND DATE(p.end_date) BETWEEN CURDATE() AND CURDATE() + INTERVAL ? DAY
+                AND p.status != 'termine'
+                ORDER BY p.end_date ASC";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$userId, $days]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur dans getProjectsWithUpcomingDeadlines: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Récupère les tâches récemment terminées
+ */
+function getRecentCompletedTasks($pdo, $userId, $limit = 5) {
+    try {
+        $sql = "SELECT t.*, p.title as project_title, p.id as project_id, d.name as domain_name,
+                t.updated_at as completed_at
+                FROM task t 
+                INNER JOIN project p ON t.project_id = p.id 
+                LEFT JOIN domain d ON p.domain_id = d.id
+                WHERE p.user_id = ? 
+                AND t.status = 1
+                ORDER BY t.updated_at DESC
+                LIMIT ?";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$userId, $limit]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur dans getRecentCompletedTasks: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
  * Calcule le pourcentage de progression global de l'utilisateur
  */
 function getOverallProgress($pdo, $userId) {
     try {
-        $totalTasks = getTotalChecks($pdo, $userId);
+        $totalTasks = getTotalTasks($pdo, $userId);
         $completedTasks = getCompletedTasks($pdo, $userId);
         
         if ($totalTasks == 0) {
