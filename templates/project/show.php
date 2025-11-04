@@ -20,10 +20,10 @@
     </div>
 <?php endif; ?>
 
-<div class="container">
+<div class="container py-4">
     <!-- En-tête du projet -->
-    <div class="d-flex justify-content-between align-items-end mt-2 mb-4">
-        <h1><?= htmlspecialchars($project['title']) ?></h1>
+    <div class="d-flex flex-column justify-content-center align-items-center mt-2 mb-4">
+        <h1 class="text-center"><?= htmlspecialchars($project['title']) ?></h1>
         <div class="d-flex gap-2">
             <?php 
             $currentStatus = ProjectStatus::tryFrom($project['status'] ?? 'planification');
@@ -142,7 +142,7 @@
         <div class="card-header">
             <h5 class="mb-0">
                 <i class="bi bi-plus-circle me-2"></i>
-                Ajouter une tâche au projet
+                Ajouter une tâche
             </h5>
         </div>
         <div class="card-body">

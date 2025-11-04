@@ -451,11 +451,6 @@ form i {
     color: #6c757d;
 }
 
-/* Espacement cohérent avec le mode lecture */
-#projectEdit .project-info-left,
-#projectEdit .project-info-right {
-    /* Hérite des styles définis précédemment */
-}
 
 /* SECTION informations du projet - PROGRESS BAR */
 .progress-complete {
@@ -511,7 +506,7 @@ form i {
     border-color: #dee2e6 !important;
 }
 
-/* CORRECTION AFFICHAGE BADGES DANS LES TÂCHES */
+/* AFFICHAGE BADGES DANS LES TÂCHES */
 
 /* Forcer l'affichage des badges dans les accordion-button */
 .accordion-button .badge {
@@ -631,3 +626,56 @@ img {
         max-width: 800px;
     }
 }
+
+/* DOMAINS PAGE */
+/* Par défaut : table normale */
+.table-responsive table {
+  width: 100%;
+}
+
+/* --- Vue mobile : affichage en cartes --- */
+@media (max-width: 768px) {
+  table.table thead {
+    display: none; /* on cache l'en-tête */
+  }
+
+  table.table,
+  table.table tbody,
+  table.table tr,
+  table.table td {
+    display: block;
+    width: 100%;
+  }
+
+  table.table tr {
+    margin-bottom: 1.5rem; /* espace entre les "cartes" */
+    border: 1px solid #dee2e6;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  table.table td {
+    text-align: left !important;
+    padding: 0.5rem 0;
+    border: none !important;
+  }
+
+  /* Label avant chaque donnée (grâce à l'attribut data-label) */
+  table.table td::before {
+    content: attr(data-label);
+    display: block;
+    font-weight: 600;
+    color: #058d7d;
+    margin-bottom: 0.2rem;
+    font-size: 0.9rem;
+  }
+
+  /* Boutons à la fin */
+  table.table td.text-end {
+    text-align: left !important;
+    margin-top: 0.5rem;
+  }
+}
+

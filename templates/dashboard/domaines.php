@@ -23,7 +23,7 @@
 </div>
 
 <div class="table-responsive">
-    <table class="table table-hover">
+    <table class="table table-striped align-middle">
         <thead>
             <tr>
                 <th>Domaine</th>
