@@ -15,7 +15,6 @@ WORKDIR /var/www/html
 COPY public ./public
 COPY src ./src
 COPY templates ./templates
-COPY composer.json composer.lock ./
 
 # Créer le dossier nécessaire à nginx
 RUN mkdir -p /run/nginx
