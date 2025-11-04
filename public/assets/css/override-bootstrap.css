@@ -1,3 +1,33 @@
+/* STRUCTURE STICKY FOOTER */
+html {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Le header reste en haut */
+header {
+    flex-shrink: 0;
+}
+
+/* Le contenu principal prend TOUT l'espace disponible */
+main {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Le footer reste collé en bas */
+footer {
+    flex-shrink: 0;
+    margin-top: auto;
+}
+
 /* VARIABLES DE COULEURS */
 :root {
   --primary: #649daeff;
@@ -198,6 +228,11 @@ h2 {
 }
 h3 {
   color: var(--primary);
+}
+
+p {
+    font-family: 'Roboto', sans-serif;
+    color: #212529;
 }
 
 .card-img-top {
@@ -527,5 +562,72 @@ form i {
     .accordion-button .badge {
         font-size: 0.7rem !important;
         padding: 0.25rem 0.5rem !important;
+    }
+}
+
+/* IMAGES HOMEPAGE */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Conteneur centré pour les images */
+.img-container {
+    display: flex;
+    flex-direction: column; /* empile les images verticalement */
+    align-items: center;
+    gap: 30px; /* espace entre les images */
+    margin: 0 auto;
+    max-width: 100%;
+    margin-top: 2rem;
+}
+
+.img-container p {
+    text-align: center;
+}
+
+.img-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border: 2px solid #058d7d;
+    border-radius: 8px;
+}
+
+.arrow-icon {
+    font-size: 4rem !important;
+    color: #17a2b8;
+}
+
+/* Largeurs spécifiques selon la taille d'écran */
+.img-responsive {
+    width: 100%;
+    max-width: 800px; /* Largeur maximale sur desktop */
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+
+
+/* Sur mobile : prend 95% de la largeur */
+@media (max-width: 768px) {
+    .img-responsive {
+        width: 95%;
+    }
+}
+
+/* Sur tablette : prend 90% de la largeur */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .img-responsive {
+        width: 90%;
+        max-width: 700px;
+    }
+}
+
+/* Sur desktop : largeur maximale */
+@media (min-width: 1025px) {
+    .img-responsive {
+        max-width: 800px;
     }
 }

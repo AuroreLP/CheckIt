@@ -15,43 +15,50 @@
     </div>
     
     <div class="container col-xxl-8 px-4 py-5">
-      <div class="text-center">
-        <h2>Découvrez les fonctionnalités principales</h2>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-          <div class="col">
-            <div class="card h-100 text-center">
-              <div class="card-header">
-                <i class="bi bi-card-checklist"></i>
-              </div>
-              <div class="card-body d-flex align-items-center">
-                <h3 class="card-title">Créez vos listes de projets</h3>
-              </div>
-            </div>
+      <div>
+        <h2 class="text-center">Comment ça fonctionne?</h2>
+        <ol class="list-group list-group-numbered">
+          <li class="list-group-item lead">Créez un compte en cliquant sur le bouton "Login"</li>
+          <li class="list-group-item lead">Allez dans l'onglet Dashboard - C'est là que vous pourrez organiser vos tâches</li>
+          <li class="list-group-item lead">Dans la barre latérale, vous trouverez l'onglet "Mes Domaines" pour ajouter  les domaines personnels et/ou professionnels qui vous intéressent</li>
+          <li class="list-group-item lead">Ensuite, allez dans l'onglet "Mes projets" pour créer vos projets en les alliant au domaine correspondant</li>
+          <li class="list-group-item lead">Enfin, tout en créant le projet, vous pouvez ajouter les premières tâches. Il sera toujours possible d'en ajouter d'autres plus tard.</li>
+          <li class="list-group-item lead">L'onglet "Focus" vous permet d'avoir un aperçu de toutes les tâches en retard et à venir, tous projets combinés.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="container col-xxl-8 px-4 py-5">
+      <div>
+        <h2 class="text-center">Exemple concret</h2>
+        <div class="img-container">
+          <div>
+            <p>Cliquer sur le bouton "Login" pour se connecter ou créer un compte:</p>
+            <img src="assets/images/checkit_login.png" alt="Page de connexion de CheckIt" class="img-fluid mx-auto d-block">
           </div>
-          <div class="col">
-            <div class="card h-100 text-center">
-              <div class="card-header">
-                <i class="bi bi-tags-fill"></i>
-              </div>
-              <div class="card-body d-flex align-items-center">
-                <h3 class="card-title">Classez les projets par domaine</h3>
-              </div>
-            </div>
+          <i class="bi bi-arrow-down arrow-icon"></i>
+          <div>
+            <p>Dans la barre de menu, cliquer sur "Dashboard", puis aller "Mes Domaines" de la barre latérale:</p>
+            <img src="assets/images/checkit_domaines.png" alt="Liste des domaines de CheckIt" class="img-fluid mx-auto d-block">
           </div>
-          <div class="col">
-            <div class="card h-100 text-center">
-              <div class="card-header">
-                <i class="bi bi-search"></i>
-              </div>
-              <div class="card-body d-flex align-items-center">
-                <h3 class="card-title">Retrouvez vos tâches par projet</h3>
-              </div>
-            </div>
+          <i class="bi bi-arrow-down arrow-icon"></i>
+          <div>
+            <p>Ensuite ajouter un nouveau projet en allant dans l'onglet "Mes Projets":</p>
+            <img src="assets/images/checkit_dashboard.png" alt="Liste des projets de CheckIt" class="img-fluid mx-auto d-block">
+          </div>
+          <i class="bi bi-arrow-down arrow-icon"></i>
+          <div>
+            <p>Une fois dans le projet, ajouter les tâches:</p>
+            <img src="assets/images/checkit_projet.png" alt="Page de projet de CheckIt" class="img-fluid mx-auto d-block">
+          </div>
+          <i class="bi bi-arrow-down arrow-icon"></i>
+          <div>
+            <p>Profiter de l'onglet "Focus" pour ne se concentrer que sur les tâches en retard et à venir:</p>
+            <img src="assets/images/checkit_focus.png" alt="Page Focus de CheckIt" class="img-fluid mx-auto d-block">
           </div>
         </div>
       </div>
     </div>
-
 <?php
   require_once __DIR__. "/../templates/footer.php"
 ?>
