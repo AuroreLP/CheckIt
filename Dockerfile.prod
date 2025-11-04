@@ -1,4 +1,3 @@
-# Utilise PHP FPM alpine + nginx dans le même container
 FROM php:8.3.20-fpm-alpine
 
 # Installer nginx + extensions PHP nécessaires
@@ -6,18 +5,23 @@ RUN apk add --no-cache nginx libpng-dev libjpeg-turbo-dev freetype-dev oniguruma
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql
 
-# Copier config nginx dans le container
+# Config nginx
 COPY ./nginx/nginx.prod.conf /etc/nginx/nginx.conf
 
-# Copier le code dans le container
+# Dossier de travail
 WORKDIR /var/www/html
-COPY . .
 
-# Créer dossier nginx run
+# --- Copier seulement ce qui est utile ---
+COPY public ./public
+COPY src ./src
+COPY templates ./templates
+COPY composer.json composer.lock ./
+
+# Créer le dossier nécessaire à nginx
 RUN mkdir -p /run/nginx
 
-# Exposer le port 10000
+# Exposer le port pour Render
 EXPOSE 10000
 
-# Lancer nginx et php-fpm
+# Lancer PHP + Nginx
 CMD php-fpm -D && nginx -g 'daemon off;'
